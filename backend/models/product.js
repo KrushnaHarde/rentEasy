@@ -23,7 +23,8 @@ const productSchema = new Schema(
         required: true 
     },
     productImage: { 
-        type: String
+        type: String,
+        required: true
     },
     additionalImages: {
         type: [String],
@@ -38,9 +39,9 @@ const productSchema = new Schema(
     },
     rating:{
         type: Number, 
-        min:1,
+        min:0,
         max:5,
-        default: 0  
+        default: 1 
     },
     price: { 
         type: Number, 

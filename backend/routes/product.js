@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
-const { requireAuth } = require('../middlewares/authMiddleware');
+const { requireAuth } = require('../middleware/authentication');
 
 // Public routes
 router.get('/', productController.getAllProducts);

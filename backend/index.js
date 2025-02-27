@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
@@ -10,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/rentEasy").then(() => console.log("Connected to DB"));
+mongoose.connect(process.env.MONGO_URL).then(() => console.log("Connected to DB"));
 
 // Middleware
 app.use(express.json()); // Parse JSON data
