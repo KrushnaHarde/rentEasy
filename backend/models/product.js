@@ -16,7 +16,7 @@ const productSchema = new Schema(
     },
     category: { 
         type: String, 
-        default: general
+        default: "general"
     },
     description: { 
         type: String, 
@@ -24,6 +24,10 @@ const productSchema = new Schema(
     },
     productImage: { 
         type: String
+    },
+    additionalImages: {
+        type: [String],
+        default: []
     },
     productCondition: { 
         type: String, 

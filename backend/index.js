@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const userRoute = require("./routes/user");
+const productRoute = require("./routes/product");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,6 +23,7 @@ app.use(
 );
 
 app.use("/user", userRoute); // User routes
+app.use("/product", productRoute); // Product routes
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
