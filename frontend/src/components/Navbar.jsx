@@ -147,7 +147,7 @@ function Navbar() {
           className="text-3xl font-bold animate-shine bg-gradient-to-r from-gray-400 via-white to-gray-300 bg-clip-text text-transparent cursor-pointer" 
           onClick={() => navigate('/')}
         >
-          R e n t E a s y
+          RentEasy
         </h1>
 
         {/* Search Box */}

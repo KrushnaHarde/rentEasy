@@ -41,7 +41,7 @@ const categories = [
 
 function Home() {
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // const [menuOpen, setMenuOpen] = useState(false);
   // const categories = [
