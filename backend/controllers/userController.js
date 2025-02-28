@@ -18,7 +18,11 @@ const signin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const token = await User.matchPasswordAndGenerateToken(email, password);
-    res.cookie("token", token, { httpOnly: true, secure: true }).json({ message: "Login successful" });
+    res.cookie("token", token, { httpOnly: true, secure: true }).json({ 
+      message: "Login successful",
+      token: token // Add token in response
+  });
+  
   } catch (error) {
     res.status(401).json({ error: "Incorrect Email or Password" });
   }
