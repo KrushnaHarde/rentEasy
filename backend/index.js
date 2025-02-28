@@ -19,10 +19,16 @@ app.use(express.json()); // Parse JSON data
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:3000", // Your React frontend URL
+    origin: "http://localhost:5173", // Your React frontend URL
     credentials: true, // Allow sending cookies
   })
 );
+
+
+app.post("/api/signup", (req, res) => {
+  res.json({ message: "Signup successful!" });
+});
+
 
 app.use("/user", userRoute); // User routes
 app.use("/product", productRoute); // Product routes
