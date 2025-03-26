@@ -21,7 +21,8 @@ app.use(express.json()); // Parse JSON data
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173", // Your React frontend URL
+    // origin (localhost) badlavla bs...................................................
+    origin: ["http://localhost:5174","http://localhost:5173"], // Your React frontend URL
     credentials: true, // Allow sending cookies
   })
 );

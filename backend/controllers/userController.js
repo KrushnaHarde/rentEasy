@@ -2,14 +2,16 @@ const User = require("../models/user");
 const { generateToken } = require("../services/authentication");
 
 // Signup Controller
+// just added return statement.....................................
 const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
   try {
-    await User.create({ fullName, email, password });
-    res.status(201).json({ message: "User created successfully" });
+    const newUser=await User.create({ fullName, email, password });
+    console.log("New user created ", newUser)
+    return res.status(201).json({ message: "User created successfully" });
   } catch (error) {
-    // console.log("Error : ", error);
-    res.status(400).json({ error: "Failed to create user" });
+    console.error("Error : ", error);
+    return res.status(400).json({ error: "Failed to create user" });
   }
 };
 
