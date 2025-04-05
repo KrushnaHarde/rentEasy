@@ -1,40 +1,74 @@
-import React from "react";
-import { Link } from "react-router-dom";
 
-function Login() {
+
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const Login = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:8000/user/signin", formData);
+      alert(response.data.message);
+      
+      // Store user info in localStorage
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      
+      // Redirect to home page on successful login
+      navigate("/home");
+    } catch (error) {
+      alert(error.response?.data?.message || "Login failed");
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0B0B0B] text-white">
-      <div className="p-8 bg-[#1A1A1A] rounded-lg shadow-md max-w-md w-full">
-        <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
-        <form>
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-300 via-white to-gray-100">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-96 text-center">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Login</h2>
+        
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <input
             type="email"
-            placeholder="Email"
-            className="w-full p-3 mb-4 bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEB5AB]"
+            name="email"
+            placeholder="Email ID"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-lg bg-gradient-to-r from-white to-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
           <input
             type="password"
+            name="password"
             placeholder="Password"
-            className="w-full p-3 mb-6 bg-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-[#BEB5AB]"
+            value={formData.password}
+            onChange={handleChange}
+            className="w-full p-3 border rounded-lg bg-gradient-to-r from-white to-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
+          
           <button
             type="submit"
-            className="w-full bg-[#BEB5AB] text-black p-3 rounded-md font-bold hover:bg-[#a89e94]"
+            className="w-full p-3 text-white font-semibold rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 transition-all"
           >
             Login
           </button>
         </form>
-
-        {/* Don't have an account? Redirect to Signup */}
-        <p className="text-center mt-4 text-gray-400">
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-[#BEB5AB] hover:underline">
-            Sign Up
-          </Link>
+        
+        <p className="mt-4 text-gray-600">
+          Don't have an account? 
+          <a href="/signup" className="text-indigo-500 font-medium hover:underline"> Sign up</a>
         </p>
       </div>
     </div>
   );
-}
+};
 
 export default Login;
