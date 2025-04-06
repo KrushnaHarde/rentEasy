@@ -8,22 +8,19 @@ function createTokenForUser(user) {
         profileImage: user.profileImage,
         role: user.role,
     };
-    const token = JWT.sign(payload, secret);
-    return token;
-    // return JWT.sign({ user }, secret, { expiresIn: '24h' });
+    return JWT.sign(payload, secret, { expiresIn: '24h' });
 }
 
 function validateToken(token) {
     try {
         const payload = JWT.verify(token, secret);
-        console.log("Extracted User ID from Token:", payload.id); // ✅ Debugging log
+        console.log("Extracted User ID from Token:", payload.id);
         return payload;
     } catch (error) {
         console.error("JWT Validation Error:", error.message);
-        return null;
+        throw error;
     }
 }
-
 
 module.exports = {
     createTokenForUser,

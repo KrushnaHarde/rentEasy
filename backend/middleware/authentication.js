@@ -1,6 +1,6 @@
 const { validateToken } = require("../services/authentication");
 
-function requireAuth(cookieName) {
+function requireAuth(cookieName = "token") {
   return (req, res, next) => {
     let token = req.cookies[cookieName] || req.headers["authorization"];
 
@@ -8,7 +8,7 @@ function requireAuth(cookieName) {
       return res.status(401).json({ error: "Unauthorized. Please log in." });
     }
 
-    // Extract token if it's in "Bearer <token>" format
+    // Handle "Bearer <token>"
     if (token.startsWith("Bearer ")) {
       token = token.split(" ")[1];
     }
