@@ -49,7 +49,18 @@ const signup = async (req, res) => {
   try {
     const newUser = await User.create({ fullName, email, password });
     console.log("New user created:", newUser);
-    res.status(201).json({ message: "User created successfully" });
+    
+    const token = createTokenForUser(newUser);
+    res.cookie("token", token, { httpOnly: true, secure: true }).json({ 
+      message: "User created and logged in successfully",
+      token,
+      user: { 
+        id: newUser._id,
+        fullName: newUser.fullName,
+        email: newUser.email
+      }
+    });
+    // res.status(201).json({ message: "User created successfully" });
   } catch (error) {
     console.error("Signup error:", error);
     res.status(400).json({ error: "Failed to create user" });

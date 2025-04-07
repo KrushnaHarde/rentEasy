@@ -28,11 +28,6 @@ app.use(
 );
 
 
-app.post("/api/signup", (req, res) => {
-  res.json({ message: "Signup successful!" });
-});
-
-
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

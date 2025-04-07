@@ -15,6 +15,7 @@ router.post('/',
     productController.createProduct
 );
 
+// update product
 router.put('/:id',
     requireAuth('token'),
     productController.uploadProductImages,
@@ -26,6 +27,7 @@ router.delete('/:id',
     productController.deleteProduct
 );
 
+// can be used for myListing 
 router.get('/user/products', 
     requireAuth('token'),
     productController.getUserProducts
