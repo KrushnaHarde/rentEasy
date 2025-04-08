@@ -13,9 +13,9 @@ RentEasy is a platform that allows users to **list items for rent** and **rent i
 
 ## Tech Stack
 
-- **Frontend**: React.js / Next.js (or any preferred frontend framework)
-- **Backend**: Node.js with Express.js / Spring Boot (depending on choice)
-- **Database**: MongoDB / PostgreSQL / MySQL
+- **Frontend**: React.js / Next.js 
+- **Backend**: Node.js with Express.js 
+- **Database**: MongoDB 
 - **Authentication**: JWT-based authentication (or OAuth)
 - **Storage**: Firebase / AWS S3 (for storing images)
 
