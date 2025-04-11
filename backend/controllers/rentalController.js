@@ -1,5 +1,12 @@
 const Product = require('../models/product');
 const Rental = require('../models/rental');
+const { 
+    sendRentalRequestNotification,
+    sendRentalApprovedNotification,
+    sendRentalCancelledNotification,
+    sendRentalCompletedNotification,
+    scheduleRentalEndingNotifications
+} = require('../services/notification');
 
 // Create a new rental request
 const createRental = async (req, res) => {
@@ -42,6 +49,9 @@ const createRental = async (req, res) => {
             totalPrice: calculateTotalPrice(product.price, startDate, endDate),
             status: 'pending'
         });
+
+        // notification to product owner
+        await sendRentalRequestNotification(rental);
 
         res.status(201).json({ 
             message: "Rental request created successfully",
@@ -112,6 +122,9 @@ const approveRental = async (req, res) => {
         rental.status = 'approved';
         await rental.save();
 
+        // Send notification to the renter
+        await sendRentalApprovedNotification(rental);
+
         res.json({ message: "Rental approved successfully" });
     } catch (error) {
         res.status(500).json({ error: "Failed to approve rental" });
@@ -151,6 +164,9 @@ const cancelRental = async (req, res) => {
             product.isAvailable = true;
             await product.save();
         }
+
+        // Send notification
+        await sendRentalCancelledNotification(rental, req.user.id);
 
         res.json({ message: "Rental cancelled successfully" });
     } catch (error) {
@@ -192,6 +208,9 @@ const completeRental = async (req, res) => {
             product.isAvailable = true;
             await product.save();
         }
+
+        // Send notification to the renter
+        await sendRentalCompletedNotification(rental);
 
         res.json({ message: "Rental completed successfully" });
     } catch (error) {
