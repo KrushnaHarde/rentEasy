@@ -9,9 +9,9 @@ const path = require("path");
 const userRoute = require("./routes/user");
 const productRoute = require("./routes/product");
 const rentalRoute = require("./routes/rental");
-const notificationRoutes = require('./routes/notification');
-const cartRoutes = require('./routes/cart');
-const { scheduleRentalEndingNotifications } = require('./services/notification');
+
+const notificationRoutes = require("./routes/notification");
+const { initNotificationScheduler } = require('./services/notificationScheduler');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +19,8 @@ const PORT = process.env.PORT || 5000;
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URL).then(() => console.log("Connected to DB"));
 
+
+// Initialize the notification scheduler
 // Middleware
 app.use(express.json()); // Parse JSON data
 app.use(cookieParser());
@@ -45,11 +47,9 @@ if (!fs.existsSync(dir)){
 app.use("/user", userRoute);    // User routes
 app.use("/product", productRoute); // Product routes
 app.use("/rental", rentalRoute);   // Rental routes
-app.use('/notifications', notificationRoutes);  // Notification routes
-app.use('/cart', cartRoutes);  // Cart routes
-
-scheduleRentalEndingNotifications();
-
+app.use('/notifications', notificationRoutes);
+initNotificationScheduler();
+// Add this with other route declarations
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -48,7 +48,7 @@ const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
   try {
     const newUser = await User.create({ fullName, email, password });
-    console.log("New user created:", newUser);
+    // console.log("New user created:", newUser);
     
     const token = createTokenForUser(newUser);
     res.cookie("token", token, { httpOnly: true, secure: true }).json({ 
