@@ -33,4 +33,15 @@ router.get('/user/products',
     productController.getUserProducts
 );
 
+router.get('/category/:category',
+    requireAuth('token'),
+    productController.getProductsByCategory
+);
+
+router.get('/category/:category/:subcategory',
+    requireAuth('token'),
+    productController.getProductsBySubcategory
+);
+
+
 module.exports = router;

@@ -3,6 +3,10 @@ const Product = require('../models/product');
 const multer = require('multer');
 const path = require('path');
 
+// Get category constants from the Product model
+const CATEGORIES = Product.CATEGORIES;
+const SUBCATEGORIES = Product.SUBCATEGORIES;
+
 // Configure multer storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -43,7 +47,7 @@ const createProduct = async (req, res) => {
         // Create product object from request body
         const productData = {
             ...req.body,
-            uploadedBy: req.user.id, // Use consistent user ID field
+            uploadedBy: req.user.id,
         };
 
         // Handle uploaded images
@@ -59,13 +63,16 @@ const createProduct = async (req, res) => {
             }
         }
 
-        // Create new product using create method
-        await Product.create(productData);
+        // Create new product
+        const product = await Product.create(productData);
         
-        res.status(201).json({ message: "Product created successfully" });
+        res.status(201).json({ 
+            message: "Product created successfully",
+            product: product
+        });
     } catch (error) {
         console.log("Error creating product:", error);
-        res.status(400).json({ error: "Failed to create product" });
+        res.status(400).json({ error: error.message || "Failed to create product" });
     }
 };
 
@@ -79,6 +86,15 @@ const getAllProducts = async (req, res) => {
         res.json(products);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch products" });
+    }
+};
+
+// Get categories and subcategories
+const getCategoriesAndSubcategories = async (req, res) => {
+    try {
+        res.json(SUBCATEGORIES);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch categories" });
     }
 };
 
@@ -133,9 +149,12 @@ const updateProduct = async (req, res) => {
             { new: true, runValidators: true }
         );
         
-        res.json({ message: "Product updated successfully" });
+        res.json({ 
+            message: "Product updated successfully",
+            product: product
+        });
     } catch (error) {
-        res.status(400).json({ error: "Failed to update product" });
+        res.status(400).json({ error: error.message || "Failed to update product" });
     }
 };
 
@@ -164,11 +183,40 @@ const deleteProduct = async (req, res) => {
 // Get products by user
 const getUserProducts = async (req, res) => {
     try {
-        const products = await Product.find({ uploadedBy: req.user.id });
-        
+        const products = await Product.find({ uploadedBy: req.user.id })
+            
         res.json(products);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch user products" });
+    }
+};
+
+// Get products by category
+const getProductsByCategory = async (req, res) => {
+    try {
+        const products = await Product.find({ category: req.params.category })
+            .populate('uploadedBy', 'fullName email')
+            .sort('-createdAt');
+        
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch products by category" });
+    }
+};
+
+// Get products by subcategory
+const getProductsBySubcategory = async (req, res) => {
+    try {
+        const products = await Product.find({ 
+            category: req.params.category,
+            subcategory: req.params.subcategory 
+        })
+            .populate('uploadedBy', 'fullName email')
+            .sort('-createdAt');
+        
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch products by subcategory" });
     }
 };
 
@@ -179,5 +227,8 @@ module.exports = {
     getProduct,
     updateProduct,
     deleteProduct,
-    getUserProducts
+    getUserProducts,
+    getCategoriesAndSubcategories,
+    getProductsByCategory,
+    getProductsBySubcategory
 };
