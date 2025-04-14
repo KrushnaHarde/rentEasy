@@ -9,7 +9,7 @@ const path = require("path");
 const userRoute = require("./routes/user");
 const productRoute = require("./routes/product");
 const rentalRoute = require("./routes/rental");
-
+const reviewRoute = require("./routes/review"); // Add review routes
 const notificationRoutes = require("./routes/notification");
 const { initNotificationScheduler } = require('./services/notificationScheduler');
 
@@ -47,9 +47,11 @@ if (!fs.existsSync(dir)){
 app.use("/user", userRoute);    // User routes
 app.use("/product", productRoute); // Product routes
 app.use("/rental", rentalRoute);   // Rental routes
+app.use("/review", reviewRoute);   // Review routes
 app.use('/notifications', notificationRoutes);
 initNotificationScheduler();
-// Add this with other route declarations
+
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
