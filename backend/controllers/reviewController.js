@@ -196,28 +196,39 @@ const getUserReviews = async (req, res) => {
     }
 };
 
-// Helper function to update product rating
+// Helper function to update product rating - IMPROVED VERSION
 const updateProductRating = async (productId) => {
     try {
         // Get all reviews for this product
-        const reviews = await Review.find({ product: productId });
+        const allReviews = await Review.find({ product: productId });
         
-        if (reviews.length === 0) {
-            // No reviews, reset rating to default
-            await Product.findByIdAndUpdate(productId, { rating: 0 });
+        // If no reviews, set rating to 0
+        if (allReviews.length === 0) {
+            await Product.findByIdAndUpdate(productId, { 
+                rating: 0,
+                reviewCount: 0
+            });
             return;
         }
         
         // Calculate average rating
-        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-        const averageRating = totalRating / reviews.length;
+        let totalRating = 0;
+        for (const review of allReviews) {
+            totalRating += review.rating;
+        }
         
-        // Update product rating
+        const averageRating = totalRating / allReviews.length;
+        
+        // Update product with average rating and review count
         await Product.findByIdAndUpdate(productId, { 
-            rating: parseFloat(averageRating.toFixed(1)) 
+            rating: parseFloat(averageRating.toFixed(1)),
+            reviewCount: allReviews.length
         });
+        
+        console.log(`Updated product ${productId} with average rating ${averageRating.toFixed(1)} from ${allReviews.length} reviews`);
     } catch (error) {
         console.error("Error updating product rating:", error);
+        throw error; // Re-throw to handle in the calling function
     }
 };
 

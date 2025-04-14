@@ -84,14 +84,15 @@ const productSchema = new Schema(
         type: String, 
         required: true
     },
-    review:{
-        type: String
-    },
-    rating:{
+    rating: {
         type: Number, 
-        min:0,
-        max:5,
-        default: 1 
+        min: 0,
+        max: 5,
+        default: 0 
+    },
+    reviewCount: {
+        type: Number,
+        default: 0
     },
     price: { 
         type: Number, 
