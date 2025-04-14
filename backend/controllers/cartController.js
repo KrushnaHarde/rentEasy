@@ -51,10 +51,11 @@ try {
     const userId = req.user._id || req.user.id;
     
     if (!userId) {
-    return res.status(401).json({
-        success: false,
-        message: 'User not authenticated properly'
-    });
+        return res.status(401).json({
+            success: false,
+            message: 'User not authenticated properly'
+
+        });
     }
 
     // Validate product exists
@@ -100,7 +101,7 @@ try {
     data: cart
     });
 } catch (error) {
-    console.error("Add to cart error:", error);
+    // console.error("Add to cart error:", error);
     res.status(500).json({
     success: false,
     message: 'Server error',
