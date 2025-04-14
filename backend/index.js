@@ -9,6 +9,8 @@ const path = require("path");
 const userRoute = require("./routes/user");
 const productRoute = require("./routes/product");
 const rentalRoute = require("./routes/rental");
+const cartRoute = require("./routes/cart");
+
 const reviewRoute = require("./routes/review"); // Add review routes
 const notificationRoutes = require("./routes/notification");
 const { initNotificationScheduler } = require('./services/notificationScheduler');
@@ -49,6 +51,9 @@ app.use("/product", productRoute); // Product routes
 app.use("/rental", rentalRoute);   // Rental routes
 app.use("/review", reviewRoute);   // Review routes
 app.use('/notifications', notificationRoutes);
+app.use('/cart', cartRoute); // Cart routes
+
+
 initNotificationScheduler();
 
 
