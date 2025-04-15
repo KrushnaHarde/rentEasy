@@ -220,6 +220,29 @@ const getProductsBySubcategory = async (req, res) => {
     }
 };
 
+const recordProductView = async (req, res, next) => {
+    try {
+      // Only record view if user is authenticated
+      if (req.user && req.user.id) {
+        const productId = req.params.id;
+        
+        // Record this view as an interaction
+      await UserInteraction.create({
+          userId: req.user.id,
+          productId,
+          interactionType: 'VIEW'
+        });
+      }
+      
+      // Continue to the actual product detail controller
+      next();
+    } catch (error) {
+      // Just log the error but don't interrupt the flow
+      console.error("Error recording product view:", error);
+      next();
+    }
+  };
+
 module.exports = { 
     uploadProductImages,
     createProduct,
@@ -230,5 +253,6 @@ module.exports = {
     getUserProducts,
     getCategoriesAndSubcategories,
     getProductsByCategory,
-    getProductsBySubcategory
+    getProductsBySubcategory,
+    recordProductView
 };

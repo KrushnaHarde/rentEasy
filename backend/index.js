@@ -10,8 +10,9 @@ const userRoute = require("./routes/user");
 const productRoute = require("./routes/product");
 const rentalRoute = require("./routes/rental");
 const cartRoute = require("./routes/cart");
-const searchRoute = require("./routes/search"); // Add search routes
-const reviewRoute = require("./routes/review"); // Add review routes
+const searchRoute = require("./routes/search"); 
+const reviewRoute = require("./routes/review"); 
+const recommendationRoutes = require('./routes/recommendation');
 const notificationRoutes = require("./routes/notification");
 const { initNotificationScheduler } = require('./services/notificationScheduler');
 
@@ -53,6 +54,7 @@ app.use("/review", reviewRoute);   // Review routes
 app.use('/notifications', notificationRoutes);
 app.use('/cart', cartRoute); // Cart routes
 app.use("/search", searchRoute);   // Search routes
+app.use('/recommendations', recommendationRoutes); // Recommendation routes
 
 initNotificationScheduler();
 

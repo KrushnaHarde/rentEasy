@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 const Rental = require('../models/rental');
-
 const User = require('../models/user');
+const UserInteraction = require('../models/userInteraction'); // Added import for UserInteraction
 const { createNotification } = require('./notificationController');
 
 // Create a new rental request
@@ -35,15 +35,28 @@ const createRental = async (req, res) => {
             return res.status(400).json({ error: "You cannot rent your own product" });
         }
 
+        // Calculate rental duration in days
+        const startDateObj = new Date(startDate);
+        const endDateObj = new Date(endDate);
+        const rentalDurationDays = Math.ceil((endDateObj - startDateObj) / (1000 * 60 * 60 * 24));
+
         // Create the rental
         const rental = await Rental.create({
             product: productId,
             renter: req.user.id,
             owner: product.uploadedBy,
-            startDate: new Date(startDate),
-            endDate: new Date(endDate),
+            startDate: startDateObj,
+            endDate: endDateObj,
             totalPrice: calculateTotalPrice(product.price, startDate, endDate),
             status: 'pending'
+        });
+
+        // Record user interaction of type RENT
+        await UserInteraction.create({
+            userId: req.user.id,
+            productId: productId,
+            interactionType: 'RENT',
+            rentalDuration: rentalDurationDays
         });
 
         // Find the owner and renter to get their names
@@ -59,7 +72,6 @@ const createRental = async (req, res) => {
             rental._id,
             productId
         );
-
 
         res.status(201).json({ 
             message: "Rental request created successfully",
@@ -131,7 +143,6 @@ const approveRental = async (req, res) => {
         // Update rental status
         rental.status = 'approved';
         await rental.save();
-
 
         // Create notification for the renter
         await createNotification(

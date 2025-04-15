@@ -1,5 +1,6 @@
 // controllers/searchController.js
 const Product = require('../models/product');
+const UserInteraction = require('../models/userInteraction'); // Import UserInteraction model
 
 // Base search function with multiple filtering options
 const searchProducts = async (req, res) => {
@@ -84,6 +85,16 @@ const searchProducts = async (req, res) => {
         // Get total count for pagination
         const totalProducts = await Product.countDocuments(searchQuery);
         
+        // Record search interaction if user is authenticated and there's a query
+        if (req.user && query) {
+            await UserInteraction.create({
+                userId: req.user.id,
+                productId: null, // No specific product for search queries
+                interactionType: 'SEARCH',
+                searchQuery: query
+            });
+        }
+        
         res.json({
             products,
             pagination: {
@@ -112,6 +123,16 @@ const searchByName = async (req, res) => {
         })
             .populate('uploadedBy', 'fullName email')
             .sort('-createdAt');
+        
+        // Record search interaction if user is authenticated
+        if (req.user) {
+            await UserInteraction.create({
+                userId: req.user.id,
+                productId: null, // No specific product for search queries
+                interactionType: 'SEARCH',
+                searchQuery: name
+            });
+        }
         
         res.json(products);
     } catch (error) {
@@ -192,17 +213,6 @@ const getProductsByDuration = async (req, res) => {
         res.status(500).json({ error: "Failed to fetch products by duration" });
     }
 };
-
-// Search products near a location
-// This is a placeholder - to implement fully, you'd need geospatial data
-// const searchNearby = async (req, res) => {
-//     try {
-//         // This would be implemented with geospatial queries if your schema had location data
-//         res.status(501).json({ message: "Nearby search not implemented yet" });
-//     } catch (error) {
-//         res.status(500).json({ error: "Failed to search nearby products" });
-//     }
-// };
 
 // Get recently added products
 const getRecentProducts = async (req, res) => {

@@ -6,7 +6,7 @@ const { requireAuth } = require('../middleware/authentication');
 
 // Public routes
 router.get('/', productController.getAllProducts);
-router.get('/:id', productController.getProduct);
+router.get('/:id', productController.recordProductView,productController.getProduct);
 
 // Protected routes - require authentication
 router.post('/', 
