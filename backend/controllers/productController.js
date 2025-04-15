@@ -2,7 +2,7 @@
 const Product = require('../models/product');
 const multer = require('multer');
 const path = require('path');
-
+const UserInteraction = require('../models/userInteraction')
 // Get category constants from the Product model
 const CATEGORIES = Product.CATEGORIES;
 const SUBCATEGORIES = Product.SUBCATEGORIES;
@@ -221,27 +221,35 @@ const getProductsBySubcategory = async (req, res) => {
 };
 
 const recordProductView = async (req, res, next) => {
-    try {
-      // Only record view if user is authenticated
-      if (req.user && req.user.id) {
+  
+    
+  try {
+        // Check if user is authenticated
+        if (!req.user || !req.user.id) {
+            console.log("No authenticated user found, skipping view recording");
+            return next();
+        }
+        
         const productId = req.params.id;
         
+        // Create interaction object with minimum required fields
+        const interactionData = {
+            userId: req.user.id,
+            productId,
+            interactionType: 'VIEW'
+        };
+        
         // Record this view as an interaction
-      await UserInteraction.create({
-          userId: req.user.id,
-          productId,
-          interactionType: 'VIEW'
-        });
-      }
-      
-      // Continue to the actual product detail controller
-      next();
+        const interaction = await UserInteraction.create(interactionData);
+        
+        // Continue to the actual product detail controller
+        next();
     } catch (error) {
-      // Just log the error but don't interrupt the flow
-      console.error("Error recording product view:", error);
-      next();
+        // Log the error in detail but don't interrupt the flow
+        console.error("Error recording product view:", error);
+        next();
     }
-  };
+};
 
 module.exports = { 
     uploadProductImages,
