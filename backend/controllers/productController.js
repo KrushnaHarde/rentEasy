@@ -6,6 +6,7 @@ const UserInteraction = require('../models/userInteraction')
 // Get category constants from the Product model
 const CATEGORIES = Product.CATEGORIES;
 const SUBCATEGORIES = Product.SUBCATEGORIES;
+const LOCATIONS = Product.LOCATIONS;
 
 // Configure multer storage
 const storage = multer.diskStorage({
@@ -49,6 +50,18 @@ const createProduct = async (req, res) => {
             ...req.body,
             uploadedBy: req.user.id,
         };
+
+        // Ensure location data is properly structured
+        if (req.body.city || req.body.address) {
+            productData.location = {
+                city: req.body.city || LOCATIONS.OTHER,
+                address: req.body.address || ''
+            };
+            
+            // Remove the individual fields to avoid duplication
+            delete productData.city;
+            delete productData.address;
+        }
 
         // Handle uploaded images
         if (req.files) {
@@ -98,6 +111,15 @@ const getCategoriesAndSubcategories = async (req, res) => {
     }
 };
 
+// Get locations
+const getLocations = async (req, res) => {
+    try {
+        res.json(LOCATIONS);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch locations" });
+    }
+};
+
 // Get single product by ID
 const getProduct = async (req, res) => {
     try {
@@ -130,6 +152,19 @@ const updateProduct = async (req, res) => {
         
         // Update image fields if files are uploaded
         const updateData = { ...req.body };
+        
+        // Handle location data
+        if (req.body.city || req.body.address) {
+            updateData.location = product.location || {}; // Start with existing location data
+            
+            if (req.body.city) updateData.location.city = req.body.city;
+            if (req.body.address) updateData.location.address = req.body.address;
+            
+            // Remove the individual fields
+            delete updateData.city;
+            delete updateData.address;
+        }
+        
         if (req.files) {
             if (req.files.productImage) {
                 updateData.productImage = `/uploads/products/${req.files.productImage[0].filename}`;
@@ -220,10 +255,23 @@ const getProductsBySubcategory = async (req, res) => {
     }
 };
 
+// Get products by location/city
+const getProductsByLocation = async (req, res) => {
+    try {
+        const products = await Product.find({ 
+            'location.city': req.params.city 
+        })
+            .populate('uploadedBy', 'fullName email')
+            .sort('-createdAt');
+        
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch products by location" });
+    }
+};
+
 const recordProductView = async (req, res, next) => {
-  
-    
-  try {
+    try {
         // Check if user is authenticated
         if (!req.user || !req.user.id) {
             console.log("No authenticated user found, skipping view recording");
@@ -260,7 +308,9 @@ module.exports = {
     deleteProduct,
     getUserProducts,
     getCategoriesAndSubcategories,
+    getLocations,
     getProductsByCategory,
     getProductsBySubcategory,
+    getProductsByLocation,
     recordProductView
 };

@@ -8,6 +8,11 @@ const { requireAuth } = require('../middleware/authentication');
 router.get('/', productController.getAllProducts);
 router.get('/:id', productController.recordProductView,productController.getProduct);
 
+
+// Get categories, subcategories, and locations
+router.get('/metadata/categories', productController.getCategoriesAndSubcategories);
+router.get('/metadata/locations', productController.getLocations);
+
 // Protected routes - require authentication
 router.post('/', 
     requireAuth('token'),
@@ -41,6 +46,12 @@ router.get('/category/:category',
 router.get('/category/:category/:subcategory',
     requireAuth('token'),
     productController.getProductsBySubcategory
+);
+
+// New location-based route
+router.get('/location/:city',
+    requireAuth('token'),
+    productController.getProductsByLocation
 );
 
 

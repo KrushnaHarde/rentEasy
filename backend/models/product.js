@@ -26,6 +26,21 @@ const SUBCATEGORIES = {
   [CATEGORIES.GENERAL]: []  // No subcategories
 };
 
+// Define location constants
+const LOCATIONS = {
+  MUMBAI: "Mumbai",
+  DELHI_NCR: "Delhi-NCR",
+  BENGALURU: "Bengaluru",
+  HYDERABAD: "Hyderabad",
+  CHANDIGARH: "Chandigarh",
+  AHMEDABAD: "Ahmedabad",
+  CHENNAI: "Chennai",
+  PUNE: "Pune",
+  KOLKATA: "Kolkata",
+  KOCHI: "Kochi",
+  OTHER: "Other"
+};
+
 // Get all subcategories in a flat array (for enum validation)
 const getAllSubcategories = () => {
   return Object.values(SUBCATEGORIES).flat();
@@ -66,6 +81,18 @@ const productSchema = new Schema(
             return SUBCATEGORIES[this.category].includes(value);
           },
           message: props => `${props.value} is not a valid subcategory for the selected category!`
+        }
+    },
+    location: {
+        city: {
+            type: String,
+            enum: Object.values(LOCATIONS),
+            required: true,
+            default: LOCATIONS.OTHER
+        },
+        address: {
+            type: String,
+            required: true
         }
     },
     description: { 
@@ -112,6 +139,7 @@ const productSchema = new Schema(
 // Export the constants as well for use in the controller
 productSchema.statics.CATEGORIES = CATEGORIES;
 productSchema.statics.SUBCATEGORIES = SUBCATEGORIES;
+productSchema.statics.LOCATIONS = LOCATIONS;
 
 const Product = model("Product", productSchema);
 module.exports = Product;
