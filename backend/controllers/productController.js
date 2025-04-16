@@ -299,6 +299,39 @@ const recordProductView = async (req, res, next) => {
     }
 };
 
+
+// Get all categories
+const getCategories = async (req, res) => {
+    try {
+        res.json(Object.values(CATEGORIES));
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch categories" });
+    }
+};
+
+// Get subcategories for a specific category
+const getSubcategories = async (req, res) => {
+    try {
+        const category = req.params.category;
+        
+        // Check if the category exists
+        if (!CATEGORIES[category] && !Object.values(CATEGORIES).includes(category)) {
+            return res.status(404).json({ error: "Category not found" });
+        }
+        
+        // Find the category key if the value was provided
+        let categoryKey = category;
+        if (!CATEGORIES[category]) {
+            categoryKey = Object.keys(CATEGORIES).find(key => CATEGORIES[key] === category);
+        }
+        
+        // Return subcategories for the specified category
+        res.json(SUBCATEGORIES[CATEGORIES[categoryKey]] || []);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch subcategories" });
+    }
+};
+
 module.exports = { 
     uploadProductImages,
     createProduct,
@@ -309,6 +342,8 @@ module.exports = {
     getUserProducts,
     getCategoriesAndSubcategories,
     getLocations,
+    getCategories,             
+    getSubcategories,   
     getProductsByCategory,
     getProductsBySubcategory,
     getProductsByLocation,
