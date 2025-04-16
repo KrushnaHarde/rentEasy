@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
-import Categories from "./components/Categories";
+// import Categories from "./components/Categories";
 import SignUp from "./components/SignUp";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
@@ -20,10 +20,10 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/category/:categoryName" element={<Categories />} />
+        {/* <Route path="/category/:categoryName" element={<Categories />} /> */}
         <Route path="signup" element={<SignUp />} />
         <Route path="login" element={<Login />} />
-        <Route path="categories" element={<Categories />} />
+        {/* <Route path="categories" element={<Categories />} /> */}
         <Route path="/search" element={<SearchResult />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
