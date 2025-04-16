@@ -388,30 +388,30 @@ function App() {
     fetchUserProfile();
   }, [navigate]);
 
-  // Function to fetch user's products
-  const fetchUserProducts = async () => {
-    if (activeSection === 'listings') {
-      try {
-        setProductsLoading(true);
-        const response = await axios.get("http://localhost:5000/product/user/products", {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        console.log("User Products:", response.data);
-        setUserProducts(response.data);
-        setProductsLoading(false);
-      } catch (err) {
-        console.error("Failed to fetch user products:", err);
-        setProductsLoading(false);
+  // // Function to fetch user's products
+  // const fetchUserProducts = async () => {
+  //   if (activeSection === 'listings') {
+  //     try {
+  //       setProductsLoading(true);
+  //       const response = await axios.get("http://localhost:5000/product/user/products", {
+  //         withCredentials: true,
+  //         headers: {
+  //           'Content-Type': 'application/json'
+  //         }
+  //       });
+  //       console.log("User Products:", response.data);
+  //       setUserProducts(response.data);
+  //       setProductsLoading(false);
+  //     } catch (err) {
+  //       console.error("Failed to fetch user products:", err);
+  //       setProductsLoading(false);
         
-        if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-          navigate('/login');
-        }
-      }
-    }
-  };
+  //       if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+  //         navigate('/login');
+  //       }
+  //     }
+  //   }
+  // };
 
   // Fetch products when activeSection changes to 'listings'
   useEffect(() => {

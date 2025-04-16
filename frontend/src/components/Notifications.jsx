@@ -8,9 +8,12 @@ const Notifications = () => {
 
   const fetchNotifications = async () => {
     try {
-      const res = await axios.get("localhost:5000/notifications", {
+      const res = await axios.get("http://localhost:5000/notifications", {
         withCredentials: true,
+        
       });
+      console.log("Fetched Notifications:", res.data);
+
       setNotifications(res.data);
     } catch (error) {
       console.error("Failed to fetch notifications:", error);
@@ -21,7 +24,7 @@ const Notifications = () => {
 
   const markAllAsRead = async () => {
     try {
-      await axios.put("localhost:5000/notifications/read-all", {}, {
+      await axios.put("http://localhost:5000/notifications/read-all", {}, {
         withCredentials: true,
       });
       setNotifications((prev) =>
@@ -34,7 +37,7 @@ const Notifications = () => {
 
   const markSingleAsRead = async (id) => {
     try {
-      await axios.put("localhost:5000/notifications", {}, {
+      await axios.put(`http://localhost:5000/notifications/${id}/read`, {}, {
         withCredentials: true,
       });
       setNotifications((prev) =>
@@ -77,6 +80,7 @@ const Notifications = () => {
               className={`border rounded-lg p-4 shadow-sm transition-all ${
                 notif.isRead ? "bg-gray-100" : "bg-white"
               }`}
+              
             >
               <div className="flex justify-between items-start">
                 <div>

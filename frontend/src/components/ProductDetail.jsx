@@ -50,8 +50,10 @@ const ProductDetail = () => {
     
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/product/${id}`);
+        console.log("Fetching product with ID:", id);
+        const res = await fetch(`http://localhost:5000/product/${id}`, {withCredentials: true});
         const data = await res.json();
+        console.log("Product response:", res);
         setProduct(data);
         setSelectedImage(0);
       } catch (err) {
@@ -65,8 +67,8 @@ const ProductDetail = () => {
       try {
         setReviewsLoading(true);
         const res = await fetch(`http://localhost:5000/review/product/${id}`);
-        console.log("id: ", id);
-        console.log("Reviews response:", res);
+        // console.log("id: ", id);
+        // console.log("Reviews response:", res);
         if (!res.ok) {
           throw new Error("Failed to fetch reviews");
         }

@@ -63,7 +63,7 @@ const Carousel = () => {
   }, []);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden mt-16">
+    <section className="relative h-screen w-full overflow-hidden">
       {/* Slides */}
       <div className="h-full w-full relative">
         {slides.map((slide, index) => (
@@ -230,31 +230,44 @@ const Categories = () => {
 
 
 
+// import React, { useState, useEffect } from 'react';
 
-const Recommended = () => {
+const Recommendations = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // const navigate = useNavigate(); // Add this import at the top
 
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        // Replace with your actual API endpoint
-        const response = await fetch('http://localhost:5000/recommendations');
+        // Use the correct endpoint with credentials
+        const response = await fetch('http://localhost:5000/recommendations/popular', { 
+          credentials: 'include' // This is better than withCredentials
+        });
+        
         if (!response.ok) {
           throw new Error('Failed to fetch recommendations');
         }
+        
         const data = await response.json();
+        console.log("Fetched recommendations:", data); // Debugging log
         setRecommendations(data);
         setLoading(false);
       } catch (err) {
         setError(err.message);
         setLoading(false);
+        console.error('Recommendation fetch error:', err);
       }
     };
 
     fetchRecommendations();
   }, []);
+
+  // Navigate to product detail page
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
 
   if (loading) {
     return <div className="text-center py-8">Loading recommendations...</div>;
@@ -273,26 +286,40 @@ const Recommended = () => {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8">Recommended For You</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recommendations.map((item) => (
-            <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-              {item.image && (
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
+          {recommendations.map((product) => (
+            <div
+              key={product._id}
+              className="bg-white rounded-lg w-96 shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer border border-gray-100"
+              onClick={() => handleProductClick(product._id)}
+            >
+              {product.productImage ? (
+                <div className="h-48 bg-gray-200" >
+                  <img
+                    src={`http://localhost:5000${product.productImage}`}
+                    alt={product.name}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      console.error("Image failed to load:", product.productImage);
+                      e.target.onerror = null; // Prevent infinite loop
+                      e.target.src = 'https://via.placeholder.com/400?text=No+Image';
+                    }}
                   />
                 </div>
+              ) : (
+                <div className="h-48 bg-gray-200 flex items-center justify-center">
+                  <span className="text-gray-400">No image available</span>
+                </div>
               )}
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                <p className="text-gray-600 mb-4">{item.description}</p>
-                <button 
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                  onClick={() => window.location.href = item.link}
-                >
-                  Learn More
-                </button>
+              <div className="p-4">
+                <h3 className="font-bold text-2xl mb-1 ">
+                  {product.name}
+                </h3>
+                <div className="text-sm text-gray-500 mb-2">
+                  {product.category}
+                </div>
+                <div className="text-blue-600 font-bold">
+                  ₹{product.price}/day
+                </div>
               </div>
             </div>
           ))}
@@ -301,7 +328,6 @@ const Recommended = () => {
     </section>
   );
 };
-
 
 
 
@@ -659,7 +685,7 @@ const Home = () => {
       {/* <Navbar /> */}
       <Carousel />
       <Categories />
-      <Recommended />
+      <Recommendations />
       <BrandHighlight />
       <AboutUs />
       <Testimonials />

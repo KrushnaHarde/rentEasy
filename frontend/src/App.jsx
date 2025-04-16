@@ -9,6 +9,7 @@ import SearchResult from './components/SearchResult';
 import ProductDetail from "./components/ProductDetail";
 import Cart from "./components/Cart";
 import Rent from "./components/Rent";
+import Notification from "./components/Notifications";
 
 import './index.css';  // Or './App.css' if that's where you put the Tailwind imports
 
@@ -28,6 +29,8 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/rent" element={<Rent />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="notifications" element={<Notification />} />
+
       </Routes>
     </Router>
   );
