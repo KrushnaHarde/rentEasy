@@ -11,6 +11,7 @@ router.use(requireAuth('token'));
 router.post('/', rentalController.createRental);
 
 // Get rentals where user is the renter
+// can be used for my bookings or my rentals
 router.get('/user', rentalController.getUserRentals);
 
 // Get rentals for products owned by the user

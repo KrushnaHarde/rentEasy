@@ -5,10 +5,11 @@ const { requireAuth } = require('../middleware/authentication'); // Assuming you
 const reviewController = require('../controllers/reviewController');
 
 
-router.use(requireAuth("token"));
+// router.use(requireAuth("token"));
 // Create a new review
 router.post(
     '/',
+    requireAuth("token"),
     reviewController.uploadReviewImages,
     reviewController.createReview
 );
