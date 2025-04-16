@@ -27,6 +27,7 @@ router.put('/:id',
     productController.updateProduct
 );
 
+// To delete the product
 router.delete('/:id', 
     requireAuth('token'),
     productController.deleteProduct
@@ -38,11 +39,13 @@ router.get('/user/products',
     productController.getUserProducts
 );
 
+// To get product by category
 router.get('/category/:category',
     requireAuth('token'),
     productController.getProductsByCategory
 );
 
+// To get Product by Subcategory
 router.get('/category/:category/:subcategory',
     requireAuth('token'),
     productController.getProductsBySubcategory
