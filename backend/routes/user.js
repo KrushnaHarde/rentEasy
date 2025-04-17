@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { signup, signin, logout, profile } = require("../controllers/userController");
+const { signup, signin, logout, profile, updateUser } = require("../controllers/userController");
 const { requireAuth } = require("../middleware/authentication");
 
 const { googleAuth } = require("../controllers/userController");
@@ -14,5 +14,5 @@ router.get("/logout", logout);
 
 // Protected Routes
 router.get("/profile", requireAuth("token"), profile);
-
+router.post("/update",requireAuth("token"), updateUser);
 module.exports = router;

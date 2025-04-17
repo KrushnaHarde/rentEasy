@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const { createTokenForUser } = require("../services/authentication");
 const { OAuth2Client } = require('google-auth-library');
+const {createHmac} = require('crypto');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -114,4 +115,85 @@ const profile = async (req, res) => {
   }
 };
 
-module.exports = { signup, signin, logout, profile, googleAuth };
+// Update User Details
+const updateUser = async (req, res) => {
+  try {
+    // Ensure the user is authenticated
+    if (!req.user?.id) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    const userId = req.user.id;
+    const { fullName, email, password, currentPassword } = req.body;
+    
+    // Find the user first
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Handle email update if provided and different from current
+    if (email && email !== user.email) {
+      // Check if email already exists for another user
+      const emailExists = await User.findOne({ email, _id: { $ne: userId } });
+      if (emailExists) {
+        return res.status(400).json({ error: "Email already in use" });
+      }
+      user.email = email;
+    }
+    
+    // Update fullName if provided
+    if (fullName) {
+      user.fullName = fullName;
+    }
+    
+    // Handle password update if provided
+    if (password) {
+      // For security, require current password verification before changing password
+      if (!currentPassword) {
+        return res.status(400).json({ error: "Current password required to update password" });
+      }
+      
+      // Verify current password
+      const salt = user.salt;
+      const hashedCurrentPassword = createHmac('sha256', salt).update(currentPassword).digest('hex');
+      
+      if (user.password !== hashedCurrentPassword) {
+        return res.status(401).json({ error: "Current password is incorrect" });
+      }
+      
+      // Set the new password - the pre-save hook will handle hashing
+      user.password = password;
+    }
+    
+    // If nothing was updated
+    if (!email && !fullName && !password) {
+      return res.status(400).json({ error: "No valid fields to update" });
+    }
+    
+    // Save the user - this will trigger the pre-save hook for password hashing
+    await user.save();
+    
+    // Generate a new token with updated user data
+    const newToken = createTokenForUser(user);
+    
+    // Return success response with updated user and new token
+    res.cookie("token", newToken, { httpOnly: true, secure: true }).json({
+      message: "User updated successfully",
+      token: newToken,
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        profileImage: user.profileImage,
+        role: user.role
+      }
+    });
+    
+  } catch (error) {
+    console.error("Update user error:", error);
+    res.status(500).json({ error: "Failed to update user" });
+  }
+};
+
+module.exports = { signup, signin, logout, profile, googleAuth, updateUser };
