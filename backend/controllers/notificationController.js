@@ -36,7 +36,7 @@ const getUserNotifications = async (req, res) => {
 // Mark a notification as read
 const markAsRead = async (req, res) => {
     try {
-        const notification = await Notification.findById(req.params._id);
+        const notification = await Notification.findById(req.params.id); 
 
         if (!notification) {
             return res.status(404).json({ error: "Notification not found" });
@@ -54,6 +54,7 @@ const markAsRead = async (req, res) => {
         res.status(500).json({ error: "Failed to mark notification as read" });
     }
 };
+
 
 const markAllAsRead = async (req, res) => {
     try {
