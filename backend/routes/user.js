@@ -1,3 +1,6 @@
+const multer = require('multer');
+const upload = multer(); 
+
 const { Router } = require("express");
 const { signup, signin, logout, profile, updateUser } = require("../controllers/userController");
 const { requireAuth } = require("../middleware/authentication");
@@ -14,5 +17,5 @@ router.get("/logout", logout);
 
 // Protected Routes
 router.get("/profile", requireAuth("token"), profile);
-router.post("/update",requireAuth("token"), updateUser);
+router.post("/update",requireAuth("token"), upload.none(), updateUser);
 module.exports = router;

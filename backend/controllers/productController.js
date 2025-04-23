@@ -1,45 +1,45 @@
 // controllers/productController.js
-const Product = require('../models/product');
-const multer = require('multer');
-const path = require('path');
-const UserInteraction = require('../models/userInteraction')
+const Product = require("../models/product");
+const multer = require("multer");
+const path = require("path");
+const UserInteraction = require("../models/userInteraction");
 // Get category constants from the Product model
 const CATEGORIES = Product.CATEGORIES;
 const SUBCATEGORIES = Product.SUBCATEGORIES;
 const LOCATIONS = Product.LOCATIONS;
 
 // Configure multer storage
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/products');
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-    }
+const storage = multer.diskStorage({        
+  destination: (req, file, cb) => {
+    cb(null, "uploads/products");
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+  },
 });
 
 // Configure file filter for images
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-        cb(null, true);
-    } else {
-        cb(new Error('Only image files are allowed!'), false);
-    }
+  if (file.mimetype.startsWith("image/")) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only image files are allowed!"), false);
+  }
 };
 
 // Initialize multer upload
 const upload = multer({
-    storage: storage,
-    fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
 });
 
 // Upload middleware
 const uploadProductImages = upload.fields([
-    { name: 'productImage', maxCount: 1 },
-    { name: 'additionalImages', maxCount: 5 }
+  { name: "productImage", maxCount: 1 },
+  { name: "additionalImages", maxCount: 5 },
 ]);
 
 // Create new product listing for rent
@@ -63,43 +63,45 @@ const createProduct = async (req, res) => {
             delete productData.address;
         }
 
-        // Handle uploaded images
-        if (req.files) {
-            if (req.files.productImage) {
-                productData.productImage = `/uploads/products/${req.files.productImage[0].filename}`;
-            }
-            
-            if (req.files.additionalImages) {
-                productData.additionalImages = req.files.additionalImages.map(
-                    file => `/uploads/products/${file.filename}`
-                );
-            }
-        }
+    // Handle uploaded images
+    if (req.files) {
+      if (req.files.productImage) {
+        productData.productImage = `/uploads/products/${req.files.productImage[0].filename}`;
+      }
 
-        // Create new product
-        const product = await Product.create(productData);
-        
-        res.status(201).json({ 
-            message: "Product created successfully",
-            product: product
-        });
-    } catch (error) {
-        console.log("Error creating product:", error);
-        res.status(400).json({ error: error.message || "Failed to create product" });
+      if (req.files.additionalImages) {
+        productData.additionalImages = req.files.additionalImages.map(
+          (file) => `/uploads/products/${file.filename}`
+        );
+      }
     }
+
+    // Create new product
+    const product = await Product.create(productData);
+
+    res.status(201).json({
+      message: "Product created successfully",
+      product: product,
+    });
+  } catch (error) {
+    console.log("Error creating product:", error);
+    res
+      .status(400)
+      .json({ error: error.message || "Failed to create product" });
+  }
 };
 
 // Get all products
 const getAllProducts = async (req, res) => {
-    try {
-        const products = await Product.find()
-            .populate('uploadedBy', 'fullName email')
-            .sort('-createdAt');
-        
-        res.json(products);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to fetch products" });
-    }
+  try {
+    const products = await Product.find()
+      .populate("uploadedBy", "fullName email")
+      .sort("-createdAt");
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
 };
 
 // Get categories and subcategories
@@ -122,18 +124,20 @@ const getLocations = async (req, res) => {
 
 // Get single product by ID
 const getProduct = async (req, res) => {
-    try {
-        const product = await Product.findById(req.params.id)
-            .populate('uploadedBy', 'fullName email');
-        
-        if (!product) {
-            return res.status(404).json({ error: "Product not found" });
-        }
-        
-        res.json(product);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to fetch product" });
+  try {
+    const product = await Product.findById(req.params.id).populate(
+      "uploadedBy",
+      "fullName email"
+    );
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
     }
+
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch product" });
+  }
 };
 
 // Update product
@@ -195,48 +199,50 @@ const updateProduct = async (req, res) => {
 
 // Delete product
 const deleteProduct = async (req, res) => {
-    try {
-        const product = await Product.findById(req.params.id);
-        
-        if (!product) {
-            return res.status(404).json({ error: "Product not found" });
-        }
-        
-        // Check if user is the owner
-        if (product.uploadedBy.toString() !== req.user.id.toString()) {
-            return res.status(403).json({ error: "Not authorized to delete this product" });
-        }
-        
-        await Product.findByIdAndDelete(req.params.id);
-        
-        res.json({ message: "Product deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to delete product" });
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
     }
+
+    // Check if user is the owner
+    if (product.uploadedBy.toString() !== req.user.id.toString()) {
+      return res
+        .status(403)
+        .json({ error: "Not authorized to delete this product" });
+    }
+
+    await Product.findByIdAndDelete(req.params.id);
+
+    res.json({ message: "Product deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete product" });
+  }
 };
 
 // Get products by user
 const getUserProducts = async (req, res) => {
-    try {
-        const products = await Product.find({ uploadedBy: req.user.id })
-            
-        res.json(products);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to fetch user products" });
-    }
+  try {
+    const products = await Product.find({ uploadedBy: req.user.id });
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch user products" });
+  }
 };
 
 // Get products by category
 const getProductsByCategory = async (req, res) => {
-    try {
-        const products = await Product.find({ category: req.params.category })
-            .populate('uploadedBy', 'fullName email')
-            .sort('-createdAt');
-        
-        res.json(products);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to fetch products by category" });
-    }
+  try {
+    const products = await Product.find({ category: req.params.category })
+      .populate("uploadedBy", "fullName email")
+      .sort("-createdAt");
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch products by category" });
+  }
 };
 
 // Get products by subcategory

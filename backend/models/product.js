@@ -1,17 +1,17 @@
-const { Schema, model } = require("mongoose");
+  const { Schema, model } = require("mongoose");
 
-// Define category and subcategory constants
-const CATEGORIES = {
-  BIKES: "Bikes",
-  FASHION_JEWELRY: "Fashion Jewelry",
-  ELECTRONICS: "Electronics & Appliance",
-  FURNITURE: "Furniture",
-  HOME_APPLIANCES: "Home Appliances",
-  CLOTHING: "Clothing Fashion",
-  BOOKS: "Books",
-  SPORTS: "Sports Equipment",
-  GENERAL: "General"
-};
+  // Define category and subcategory constants
+  const CATEGORIES = {
+    BIKES: "Bikes",
+    FASHION_JEWELRY: "Fashion Jewelry",
+    ELECTRONICS: "Electronics & Appliance",
+    FURNITURE: "Furniture",
+    HOME_APPLIANCES: "Home Appliances",
+    CLOTHING: "Clothing Fashion",
+    BOOKS: "Books",
+    SPORTS: "Sports Equipment",
+    GENERAL: "General"
+  };
 
 // Define subcategory enums for each category
 const SUBCATEGORIES = {
@@ -41,10 +41,10 @@ const LOCATIONS = {
   OTHER: "Other"
 };
 
-// Get all subcategories in a flat array (for enum validation)
-const getAllSubcategories = () => {
-  return Object.values(SUBCATEGORIES).flat();
-};
+  // Get all subcategories in a flat array (for enum validation)
+  const getAllSubcategories = () => {
+    return Object.values(SUBCATEGORIES).flat();
+  };
 
 const productSchema = new Schema(
   {
@@ -141,5 +141,5 @@ productSchema.statics.CATEGORIES = CATEGORIES;
 productSchema.statics.SUBCATEGORIES = SUBCATEGORIES;
 productSchema.statics.LOCATIONS = LOCATIONS;
 
-const Product = model("Product", productSchema);
-module.exports = Product;
+  const Product = model("Product", productSchema);
+  module.exports = Product;

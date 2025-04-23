@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from "lucide-react";
+// import LottieAnimation from './LottieAnimation';
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/Button";
 import { Check, Shield, Clock, PiggyBank } from 'lucide-react';
 import { Star } from 'lucide-react';
@@ -19,7 +21,11 @@ import {
   Linkedin, 
   Mail, 
   Phone, 
-  MapPin
+  MapPin,
+  Gem,
+  Dumbbell,Trophy,
+  Fan,
+  Boxes 
 } from "lucide-react";
 
 // Carousel Component
@@ -65,34 +71,35 @@ const Carousel = () => {
   return (
     <section className="relative h-screen w-full overflow-hidden">
       {/* Slides */}
-      <div className="h-full w-full relative">
-        {slides.map((slide, index) => (
-          <div 
-            key={index}
-            className={`absolute inset-0 h-full w-full transition-opacity duration-700 ${
-              index === currentSlide ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
-          >
-            <div className="absolute inset-0 bg-black/30 z-10"></div>
-            <img 
-              src={slide.image} 
-              alt={slide.title} 
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 z-20 flex items-center">
-              <div className="container mx-auto px-6">
-                <div className="max-w-lg text-white">
-                  <h1 className="text-4xl md:text-6xl font-bold mb-4">{slide.title}</h1>
-                  <p className="text-xl mb-8">{slide.description}</p>
-                  <Button className="bg-rent-blue hover:bg-rent-dark-teal text-white py-3 px-8 text-lg">
-                    {slide.buttonText}
-                  </Button>
-                </div>
-              </div>
-            </div>
+      <div className="relative w-full h-[800px]">
+  {slides.map((slide, index) => (
+    <div 
+      key={index}
+      className={`absolute inset-0 h-full w-full transition-opacity duration-700 ${
+        index === currentSlide ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
+    >
+      <div className="absolute inset-0 bg-black/30 z-10"></div>
+      <img 
+        src={slide.image} 
+        alt={slide.title} 
+        className="h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 z-20 flex items-center">
+        <div className="container mx-auto px-6">
+          <div className="max-w-lg text-white">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">{slide.title}</h1>
+            <p className="text-xl mb-8">{slide.description}</p>
+            <Button className="bg-[#2AB3E6] hover:bg-[#016D6D] text-white py-3 px-8 text-lg">
+              {slide.buttonText}
+            </Button>
           </div>
-        ))}
+        </div>
       </div>
+    </div>
+  ))}
+</div>
+
       
       {/* Navigation Controls */}
       <button 
@@ -128,89 +135,127 @@ const Carousel = () => {
 };
 
 // Categories Component
+// import { useState } from 'react';
+// import { Laptop, Bike, Shirt, PenTool, Sofa, Camera, Car, BookOpen, Home as HomeIcon, ChevronDown, ChevronUp } from 'lucide-react';
+
 const categories = [
   {
-    title: "Electronics",
+    title: "Electronics & Appliance",
     icon: <Laptop size={40} />,
-    color: "rent-light-blue",
-    hoverColor: "rent-blue",
+    color: "#1399c6",       // Light Blue
+    hoverColor: "#1171ba",  // Blue
+    subcategories: ["Laptops", "Smartphones", "Audio Equipment", "Gaming Consoles", "Cameras", "Drones", "Tablets", "Smart Watches"]
   },
   {
     title: "Bikes",
     icon: <Bike size={40} />,
-    color: "rent-sky-blue",
-    hoverColor: "rent-light-blue",
+    color: "#24aae2",
+    hoverColor: "#1399c6",
+    subcategories: ["Mountain Bikes", "Road Bikes", "Electric Bikes", "BMX", "Hybrid Bikes", "Cruisers", "Kids Bikes"]
   },
   {
-    title: "Fashion",
+    title: "Clothing Fashion",
     icon: <Shirt size={40} />,
-    color: "rent-blue",
-    hoverColor: "rent-dark-teal",
+    color: "#1171ba",
+    hoverColor: "#0e8c7f",
+    subcategories: ["Men's Clothing", "Women's Clothing", "Jewelry", "Watches", "Bags", "Accessories", "Shoes", "Formal Wear"]
   },
   {
-    title: "Stationery",
-    icon: <PenTool size={40} />,
-    color: "rent-green-teal",
-    hoverColor: "rent-dark-teal",
+    title: "Fashion jewelry",
+    icon: <Gem size={40} />,
+    color: "#0e8c7f",
+    hoverColor: "#1399c6",
+    subcategories: ["Notebooks", "Pens & Pencils", "Art Supplies", "Office Equipment", "Planners", "Desk Accessories"]
   },
   {
     title: "Furniture",
     icon: <Sofa size={40} />,
-    color: "rent-dark-teal",
-    hoverColor: "rent-green-teal",
-  },
-  {
-    title: "Cameras",
-    icon: <Camera size={40} />,
-    color: "rent-light-blue",
-    hoverColor: "rent-blue",
-  },
-  {
-    title: "Vehicles",
-    icon: <Car size={40} />,
-    color: "rent-blue",
-    hoverColor: "rent-dark-teal",
+    color: "#096192",
+    hoverColor: "#0e8c7f",
+    subcategories: ["Sofas", "Beds", "Dining Tables", "Office Furniture", "Outdoor Furniture", "Chairs", "Storage Units"]
   },
   {
     title: "Books",
     icon: <BookOpen size={40} />,
-    color: "rent-sky-blue",
-    hoverColor: "rent-light-blue",
+    color: "#1399c6",
+    hoverColor: "#1171ba",
+    subcategories: ["DSLR", "Mirrorless", "Action Cameras", "Video Equipment", "Lenses", "Lighting", "Tripods"]
   },
   {
-    title: "Real Estate",
+    title: "Home Appliances",
     icon: <HomeIcon size={40} />,
-    color: "rent-green-teal",
-    hoverColor: "rent-dark-teal",
+    color: "#1171ba",
+    hoverColor: "#0e8c7f",
+    subcategories: ["Cars", "Motorcycles", "Vans", "Trucks", "RVs", "Boats", "Scooters", "Luxury Vehicles"]
+  },
+  {
+    title: "Sports Equipment",
+    icon: <Dumbbell size={40} />,
+    color: "#24aae2",
+    hoverColor: "#1399c6",
+    subcategories: ["Fiction", "Non-Fiction", "Academic", "Children's Books", "Comics", "Magazines", "Reference"]
+  },
+  {
+    title: "General",
+    icon: <Boxes size={40} />,
+    color: "#0e8c7f",
+    hoverColor: "#1399c6",
+    subcategories: ["Apartments", "Houses", "Office Spaces", "Commercial Property", "Vacation Rentals", "Event Venues"]
   },
 ];
 
-const CategoryCard = ({ title, icon, color, hoverColor }) => {
+const CategoryCard = ({ title, icon, color, hoverColor, navigate}) => {
   return (
-    <div className="relative group overflow-hidden">
-      <div className={`flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md border border-gray-100 
-                      hover:shadow-lg transition-all duration-300 h-full
-                      hover:border-${hoverColor} hover:-translate-y-1`}>
-        <div className={`p-4 rounded-full bg-${color}/10 text-${color} mb-4 
-                       group-hover:bg-${hoverColor}/10 group-hover:text-${hoverColor} transition-colors duration-300`}>
-          {icon}
+    <div className="relative group overflow-hidden h-48">
+      <div
+        className="flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md border border-gray-100 
+                  hover:shadow-lg transition-all duration-300 h-full hover:-translate-y-1"
+        style={{
+          borderColor: 'transparent',
+          cursor: 'pointer'
+        }}
+        onClick={() => navigate(`/category/${encodeURIComponent(title.toLowerCase())}`)}
+      >
+        <div
+          className="p-4 rounded-full mb-4 transition-colors duration-300"
+          style={{
+            backgroundColor: `${color}1A`, // ~10% opacity
+            color: color,
+          }}
+        >
+          <span className="group-hover:transition-colors">{icon}</span>
         </div>
-        <h3 className={`text-lg font-semibold text-gray-800 group-hover:text-${hoverColor} transition-colors duration-300`}>
+        <h3
+          className="text-lg font-semibold transition-colors duration-300 group-hover:text-black"
+          style={{
+            color: color,
+          }}
+        >
           {title}
         </h3>
-        <div className={`absolute bottom-0 left-0 w-full h-1 bg-${color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`}></div>
+        <div
+          className="absolute bottom-0 left-0 w-full h-1 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+          style={{
+            backgroundColor: hoverColor,
+          }}
+        ></div>
       </div>
     </div>
   );
 };
 
+
+
 const Categories = () => {
+
+const navigate = useNavigate();
+// />
   return (
     <section id="categories" className="py-16 px-6 bg-gray-50">
       <div className="container mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-            Browse by <span className="text-rent-blue">Category</span>
+          <h2 className="text-3xl md:text-4xl font-bold mb-3">
+            Browse by <span style={{ color: '#1399c6' }}>Categories</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Discover the perfect rental from our wide selection of categories. Whether you need it for a day or a month, we've got you covered.
@@ -218,21 +263,27 @@ const Categories = () => {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-          {categories.map((category, index) => (
-            <CategoryCard key={index} {...category} />
-          ))}
+        {categories.map((category, index) => (
+  <CategoryCard 
+    key={index}
+    {...category}
+    navigate={navigate}
+  />
+))}
+
         </div>
-      </div>
+      </div>      
     </section>
   );
 };
-
+// export default Categories;
 
 
 
 // import React, { useState, useEffect } from 'react';
 
 const Recommendations = () => {
+  const navigate = useNavigate(); // Add this import at the top
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -284,7 +335,7 @@ const Recommendations = () => {
   return (
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">Recommended For You</h2>
+        <h2 className="text-3xl font-bold text-center mb-8"><span style={{ color: '#1399c6' }}>Recommended</span> For You</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {recommendations.map((product) => (
             <div
@@ -338,36 +389,41 @@ const BrandHighlight = () => {
     <section className="py-24 relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-rent-light-blue"></div>
-        <div className="absolute top-1/2 -right-32 w-96 h-96 rounded-full bg-rent-blue"></div>
-        <div className="absolute -bottom-20 left-1/4 w-72 h-72 rounded-full bg-rent-green-teal"></div>
+  <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-[#AEE9F7]"></div>
+  <div className="absolute top-1/2 -right-32 w-96 h-96 rounded-full bg-[#2AB3E6]"></div>
+  <div className="absolute -bottom-20 left-1/4 w-72 h-72 rounded-full bg-[#00B3A4]"></div>
+</div>
+
+<div className="container mx-auto px-6 relative">
+  <div className="text-center max-w-4xl mx-auto">
+    <h2 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-[#AEE9F7] via-[#2AB3E6] to-[#016D6D] bg-clip-text text-transparent">
+      RentEasy
+    </h2>
+    <div className="h-1 w-24 bg-gradient-to-r from-[#AEE9F7] via-[#2AB3E6] to-[#016D6D] mx-auto mb-6 rounded-full"></div>
+    <p className="text-xl md:text-2xl text-gray-600 mb-8">
+      Your Smart Rental Companion
+    </p>
+    <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+      
+      <div className="flex items-center bg-white shadow-md rounded-xl p-4 px-6">
+        <div className="text-3xl font-bold text-[#1399c6] mr-3">10k+</div>
+        <div className="text-sm text-gray-600">Active Listings</div>
       </div>
       
-      <div className="container mx-auto px-6 relative">
-        <div className="text-center max-w-4xl mx-auto">
-          <h2 className="text-5xl md:text-7xl font-bold mb-6 bg-rent-gradient bg-clip-text text-transparent">
-            RentEasy
-          </h2>
-          <div className="h-1 w-24 bg-rent-gradient mx-auto mb-6 rounded-full"></div>
-          <p className="text-xl md:text-2xl text-gray-600 mb-8">
-            Your Smart Rental Companion
-          </p>
-          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-            <div className="flex items-center bg-white shadow-md rounded-xl p-4 px-6">
-              <div className="text-3xl font-bold text-rent-blue mr-3">10k+</div>
-              <div className="text-sm text-gray-600">Active Listings</div>
-            </div>
-            <div className="flex items-center bg-white shadow-md rounded-xl p-4 px-6">
-              <div className="text-3xl font-bold text-rent-dark-teal mr-3">50+</div>
-              <div className="text-sm text-gray-600">Cities Covered</div>
-            </div>
-            <div className="flex items-center bg-white shadow-md rounded-xl p-4 px-6">
-              <div className="text-3xl font-bold text-rent-green-teal mr-3">5k+</div>
-              <div className="text-sm text-gray-600">Happy Renters</div>
-            </div>
-          </div>
-        </div>
+      <div className="flex items-center bg-white shadow-md rounded-xl p-4 px-6">
+        <div className="text-3xl font-bold text-[#016D6D] mr-3">50+</div>
+        <div className="text-sm text-gray-600">Cities Covered</div>
       </div>
+      
+      <div className="flex items-center bg-white shadow-md rounded-xl p-4 px-6">
+        <div className="text-3xl font-bold text-[#00B3A4] mr-3">5k+</div>
+        <div className="text-sm text-gray-600">Happy Renters</div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
     </section>
   );
 };
@@ -388,11 +444,11 @@ const AboutUs = () => {
               />
             </div>
             <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-xl shadow-lg animate-fade-in">
-              <div className="flex space-x-2">
-                <div className="w-2 h-2 rounded-full bg-rent-light-blue"></div>
-                <div className="w-2 h-2 rounded-full bg-rent-blue"></div>
-                <div className="w-2 h-2 rounded-full bg-rent-dark-teal"></div>
-              </div>
+            <div className="flex space-x-2">
+  <div className="w-2 h-2 rounded-full bg-[#1399c6]"></div>
+  <div className="w-2 h-2 rounded-full bg-[#2AB3E6]"></div>
+  <div className="w-2 h-2 rounded-full bg-[#016D6D]"></div>
+</div>
               <p className="font-medium text-gray-700 mt-1">Trusted by thousands</p>
             </div>
           </div>
@@ -400,7 +456,7 @@ const AboutUs = () => {
           {/* Text side */}
           <div className="space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-              About <span className="text-rent-blue">RentEasy</span>
+              About <span style={{ color: '#1399c6' }}>RentEasy</span>
             </h2>
             <p className="text-gray-600 text-lg">
               RentEasy is revolutionizing the way people access the items they need. Our platform connects those who want to rent with those who have items to offer, creating a community of sharing that reduces waste and increases accessibility.
@@ -410,45 +466,47 @@ const AboutUs = () => {
             </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-              <div className="flex items-start space-x-3">
-                <div className="bg-rent-light-blue/10 p-2 rounded-lg">
-                  <Check className="text-rent-light-blue w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Verified Renters</h4>
-                  <p className="text-gray-600 text-sm">All users are ID verified</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <div className="bg-rent-blue/10 p-2 rounded-lg">
-                  <Shield className="text-rent-blue w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Secure Payments</h4>
-                  <p className="text-gray-600 text-sm">Protected transactions</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <div className="bg-rent-green-teal/10 p-2 rounded-lg">
-                  <Clock className="text-rent-green-teal w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Flexible Durations</h4>
-                  <p className="text-gray-600 text-sm">Rent for days or months</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <div className="bg-rent-dark-teal/10 p-2 rounded-lg">
-                  <PiggyBank className="text-rent-dark-teal w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Save Money</h4>
-                  <p className="text-gray-600 text-sm">More affordable than buying</p>
-                </div>
-              </div>
+  <div className="flex items-start space-x-3">
+    <div className="bg-[#2AB3E6]/10 p-2 rounded-lg">
+      <Check className="text-[#2AB3E6] w-5 h-5" />
+    </div>
+    <div>
+      <h4 className="font-semibold text-gray-800">Verified Renters</h4>
+      <p className="text-gray-600 text-sm">All users are ID verified</p>
+    </div>
+  </div>
+
+  <div className="flex items-start space-x-3">
+    <div className="bg-[#2AB3E6]/10 p-2 rounded-lg">
+      <Shield className="text-[#2AB3E6] w-5 h-5" />
+    </div>
+    <div>
+      <h4 className="font-semibold text-gray-800">Secure Payments</h4>
+      <p className="text-gray-600 text-sm">Protected transactions</p>
+    </div>
+  </div>
+
+  <div className="flex items-start space-x-3">
+    <div className="bg-[#00B3A4]/10 p-2 rounded-lg">
+      <Clock className="text-[#00B3A4] w-5 h-5" />
+    </div>
+    <div>
+      <h4 className="font-semibold text-gray-800">Flexible Durations</h4>
+      <p className="text-gray-600 text-sm">Rent for days or months</p>
+    </div>
+  </div>
+
+  <div className="flex items-start space-x-3">
+    <div className="bg-[#016D6D]/10 p-2 rounded-lg">
+      <PiggyBank className="text-[#016D6D] w-5 h-5" />
+    </div>
+    <div>
+      <h4 className="font-semibold text-gray-800">Save Money</h4>
+      <p className="text-gray-600 text-sm">More affordable than buying</p>
+    </div>
+  </div>
+{/* </div> */}
+
             </div>
           </div>
         </div>
@@ -513,50 +571,82 @@ const TestimonialCard = ({ name, title, image, rating, text }) => {
 };
 
 const Testimonials = () => {
+  const scrollingTestimonials = [...testimonials, ...testimonials]; // Duplicate for seamless loop
+
   return (
-    <section id="testimonials" className="py-16 px-6" style={{
-      background: "linear-gradient(to bottom, white, #1399c610, white)"
-    }}>
-      <div className="container mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-            What Our <span className="text-rent-blue">Users Say</span>
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Don't just take our word for it. Hear from our community of renters and how RentEasy has helped them.
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, index) => (
-            <TestimonialCard key={index} {...testimonial} />
+    <section
+      id="testimonials"
+      className="py-16 px-6 overflow-hidden"
+      style={{
+        background: "linear-gradient(to bottom, white, #1399c610, white)",
+      }}
+    >
+      <div className="text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+          What Our <span style={{ color: "#1399c6" }}>Users Say</span>
+        </h2>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Don't just take our word for it. Hear from our community of renters and how RentEasy has helped them.
+        </p>
+      </div>
+
+      {/* Scrolling container */}
+      <div className="relative overflow-hidden">
+        <div
+          className="flex space-x-6"
+          style={{
+            animation: 'scrollLeft 30s linear infinite',
+            width: 'max-content',
+          }}
+        >
+          {scrollingTestimonials.map((testimonial, index) => (
+            <div key={index} className="min-w-[300px] max-w-xs">
+              <TestimonialCard {...testimonial} />
+            </div>
           ))}
         </div>
       </div>
+
+      {/* Add keyframes for animation */}
+      <style jsx>{`
+        @keyframes scrollLeft {
+          0% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+      `}</style>
     </section>
   );
 };
+
 
 // HamchaarLogo Component
 const HamchaarLogo = () => {
   return (
     <section className="py-16 bg-white">
-      <div className="container mx-auto px-6 text-center">
-        <div className="max-w-xl mx-auto">
-          <div className="bg-white shadow-md rounded-xl p-8 inline-block">
-            <div className="flex flex-col items-center justify-center">
-              <div className="bg-rent-gradient p-1 rounded-lg inline-block mb-4">
-                <div className="bg-white p-2 rounded">
-                  <h3 className="font-bold text-2xl bg-rent-gradient bg-clip-text text-transparent">Hamchaar</h3>
-                </div>
-              </div>
-              <p className="text-gray-600">
-                In collaboration with Hamchaar
-              </p>
-            </div>
+<div className="container mx-auto px-6 text-center">
+  <div className="max-w-xl mx-auto">
+    <div className="bg-white shadow-md rounded-xl p-8 inline-block">
+      <div className="flex flex-col items-center justify-center">
+        
+        <div className="bg-gradient-to-r from-[#AEE9F7] via-[#2AB3E6] to-[#016D6D] p-1 rounded-lg inline-block mb-4">
+          <div className="bg-white p-2 rounded">
+            <h3 className="text-[#1399c6] text-lg font-semibold">Hamchaar</h3>
           </div>
         </div>
+        
+        <p className="text-gray-600">
+          In collaboration with Hamchaar
+        </p>
+        
       </div>
+    </div>
+  </div>
+</div>
+
     </section>
   );
 };
@@ -570,7 +660,7 @@ const Footer = () => {
           {/* Column 1: Logo and About */}
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">
-              Rent<span className="text-rent-light-blue">Easy</span>
+              Rent<span style={{ color: '#1399c6' }}>Easy</span>
             </h2>
             <p className="text-gray-400">
               Simplifying rentals with technology and trust. Your one-stop platform for all rental needs.

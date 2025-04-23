@@ -60,5 +60,8 @@ router.get('/location/:city',
     productController.getProductsByLocation
 );
 
+router.get('/categories',
+    productController.getCategoriesAndSubcategories
+);
 
 module.exports = router;
