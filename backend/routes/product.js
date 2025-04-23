@@ -11,7 +11,7 @@ router.get('/:id', productController.recordProductView,productController.getProd
 
 // Get categories, subcategories, and locations
 router.get('/metadata/categories', productController.getCategories);  // New route for categories
-router.get('/metadata/subcategories/:category', productController.getSubcategories); 
+router.post("/get-subcategories/", productController.getSubcategories); // :category is optional
 
 router.get('/metadata/all-categories', productController.getCategoriesAndSubcategories);
 router.get('/metadata/locations', productController.getLocations);
