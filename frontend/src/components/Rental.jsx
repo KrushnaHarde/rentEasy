@@ -6,20 +6,51 @@ const BaseUrl = "http://localhost:5000";
 
 const Rental = () => {
   const categories = {
-    "Bikes": ["Scooty", "Motorcycle"],
+    Bikes: ["Scooty", "Motorcycle"],
     "Fashion Jewelry": ["Necklace sets", "Earrings", "Rings", "Watches"],
-    "Electronics & Appliances": ["Laptops", "Sound Systems / Bluetooth Speakers", "DSLR / Mirrorless Cameras", "HeadPhones Earphones"],
-    "Furniture": ["Beds", "Study/normal Tables chairs", "Cupboards", "Dressing tables", "Book Shelves", "Sofas"],
-    "Home Appliances": ["Refrigerators", "Washing Machines", "Microwave ovens", "Water purifiers", "Air conditioners"],
-    "Clothing Fashion": ["Shirts Tshirts", "Bottoms", "Fashion cloths", "Ethnic Wear"],
-    "Books": ["Fiction", "Non-Fiction", "Academic", "Comics", "Magazines"],
-    "Sports Equipments": []
+    "Electronics & Appliances": [
+      "Laptops",
+      "Sound Systems / Bluetooth Speakers",
+      "DSLR / Mirrorless Cameras",
+      "HeadPhones Earphones",
+    ],
+    Furniture: [
+      "Beds",
+      "Study/normal Tables chairs",
+      "Cupboards",
+      "Dressing tables",
+      "Book Shelves",
+      "Sofas",
+    ],
+    "Home Appliances": [
+      "Refrigerators",
+      "Washing Machines",
+      "Microwave ovens",
+      "Water purifiers",
+      "Air conditioners",
+    ],
+    "Clothing Fashion": [
+      "Shirts Tshirts",
+      "Bottoms",
+      "Fashion cloths",
+      "Ethnic Wear",
+    ],
+    Books: ["Fiction", "Non-Fiction", "Academic", "Comics", "Magazines"],
+    "Sports Equipments": [],
   };
 
   const cities = [
-    "Mumbai", "Delhi", "Bangalore", "Hyderabad", "Chennai", 
-    "Kolkata", "Pune", "Ahmedabad", "Jaipur", "Lucknow", 
-    "Chandigarh", "Other"
+    "Mumbai",
+    "Delhi-NCR",
+    "Bengaluru",
+    "Hyderabad",
+    "Chandigarh",
+    "Ahmedabad",
+    "Chennai",
+    "Pune",
+    "Kolkata",
+    "Kochi",
+    "Other",
   ];
 
   const [expandedCategories, setExpandedCategories] = useState({});
@@ -34,7 +65,7 @@ const Rental = () => {
     "location[address]": "",
     productImage: null,
     additionalImages: [],
-    productCondition: ""
+    productCondition: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -43,60 +74,60 @@ const Rental = () => {
   const [errorDetails, setErrorDetails] = useState(null);
 
   const toggleCategory = (category) => {
-    setExpandedCategories(prev => ({
+    setExpandedCategories((prev) => ({
       ...prev,
-      [category]: !prev[category]
+      [category]: !prev[category],
     }));
   };
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      category: category
+      category: category,
     }));
     setSelectedSubcategory(null);
   };
 
   const handleSubcategorySelect = (subcategory) => {
     setSelectedSubcategory(subcategory);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      subcategory: subcategory
+      subcategory: subcategory,
     }));
   };
 
   const handleProductImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        productImage: file
+        productImage: file,
       }));
     }
   };
 
   const handleAdditionalImagesUpload = (e) => {
     const files = Array.from(e.target.files);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      additionalImages: [...prev.additionalImages, ...files]
+      additionalImages: [...prev.additionalImages, ...files],
     }));
   };
 
   const handleRemoveProductImage = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      productImage: null
+      productImage: null,
     }));
   };
 
   const handleRemoveAdditionalImage = (index) => {
     const newImages = [...formData.additionalImages];
     newImages.splice(index, 1);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      additionalImages: newImages
+      additionalImages: newImages,
     }));
   };
 
@@ -108,7 +139,10 @@ const Rental = () => {
     setError(null);
     setErrorDetails(null);
 
-    if (!selectedCategory || (categories[selectedCategory].length > 0 && !selectedSubcategory)) {
+    if (
+      !selectedCategory ||
+      (categories[selectedCategory].length > 0 && !selectedSubcategory)
+    ) {
       setError("Please select a category and subcategory (if applicable)");
       setIsSubmitting(false);
       return;
@@ -122,17 +156,20 @@ const Rental = () => {
 
     try {
       const formDataForSubmit = new FormData();
-      
+
       // Append all form fields
       formDataForSubmit.append("name", formData.name);
       formDataForSubmit.append("description", formData.description);
       formDataForSubmit.append("price", formData.price);
       formDataForSubmit.append("duration[days]", formData["duration[days]"]);
       formDataForSubmit.append("location[city]", formData["location[city]"]);
-      formDataForSubmit.append("location[address]", formData["location[address]"]);
+      formDataForSubmit.append(
+        "location[address]",
+        formData["location[address]"]
+      );
       formDataForSubmit.append("category", selectedCategory);
       formDataForSubmit.append("productCondition", formData.productCondition);
-      
+
       if (selectedSubcategory) {
         formDataForSubmit.append("subcategory", selectedSubcategory);
       }
@@ -146,15 +183,20 @@ const Rental = () => {
       });
 
       const token = getAuthToken();
-      if (!token) throw new Error("Authentication token not found. Please log in again.");
+      if (!token)
+        throw new Error("Authentication token not found. Please log in again.");
 
-      const response = await axios.post(`${BaseUrl}/product`, formDataForSubmit, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "Authorization": `Bearer ${token}`
-        },
-        withCredentials: true
-      });
+      const response = await axios.post(
+        `${BaseUrl}/product`,
+        formDataForSubmit,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
 
       setProductId(response.data.product?._id);
       setSuccess(true);
@@ -169,14 +211,18 @@ const Rental = () => {
         "location[address]": "",
         productImage: null,
         additionalImages: [],
-        productCondition: ""
+        productCondition: "",
       });
     } catch (err) {
       if (err.response) {
-        setError(`Server error: ${err.response?.data?.error || err.response.status}`);
+        setError(
+          `Server error: ${err.response?.data?.error || err.response.status}`
+        );
         setErrorDetails(JSON.stringify(err.response.data, null, 2));
       } else if (err.request) {
-        setError("No response from server. Please check your internet connection.");
+        setError(
+          "No response from server. Please check your internet connection."
+        );
       } else {
         setError(`Error: ${err.message}`);
       }
@@ -195,13 +241,18 @@ const Rental = () => {
         {success ? (
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
             <strong className="font-bold">Success!</strong>
-            <span className="block sm:inline"> Your item has been listed successfully.</span>
+            <span className="block sm:inline">
+              {" "}
+              Your item has been listed successfully.
+            </span>
             <p className="mt-2">Product ID: {productId}</p>
             <div className="mt-4 flex space-x-4">
-              <button onClick={() => setSuccess(false)} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+              <button
+                onClick={() => setSuccess(false)}
+                className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+              >
                 List Another Item
-              </button> 
-              
+              </button>
             </div>
           </div>
         ) : (
@@ -213,7 +264,9 @@ const Rental = () => {
                 {errorDetails && (
                   <details className="mt-2 text-sm">
                     <summary>Technical details</summary>
-                    <pre className="overflow-auto p-2 bg-red-50 rounded-lg mt-2">{errorDetails}</pre>
+                    <pre className="overflow-auto p-2 bg-red-50 rounded-lg mt-2">
+                      {errorDetails}
+                    </pre>
                   </details>
                 )}
               </div>
@@ -221,14 +274,29 @@ const Rental = () => {
 
             {/* Category Selection */}
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-[#016D6D] mb-4">Select a Category*</h2>
+              <h2 className="text-xl font-semibold text-[#016D6D] mb-4">
+                Select a Category*
+              </h2>
               <div className="space-y-2">
                 {Object.entries(categories).map(([category, subcategories]) => (
-                  <div key={category} className="border border-gray-200 rounded-lg overflow-hidden">
-                    <div className={`flex items-center p-3 cursor-pointer transition-colors ${expandedCategories[category] ? "bg-[#F0FAFC]" : "hover:bg-[#E0F7FF]"}`}
-                      onClick={() => toggleCategory(category)}>
+                  <div
+                    key={category}
+                    className="border border-gray-200 rounded-lg overflow-hidden"
+                  >
+                    <div
+                      className={`flex items-center p-3 cursor-pointer transition-colors ${
+                        expandedCategories[category]
+                          ? "bg-[#F0FAFC]"
+                          : "hover:bg-[#E0F7FF]"
+                      }`}
+                      onClick={() => toggleCategory(category)}
+                    >
                       <span className="mr-3 text-[#2AB3E6]">
-                        {expandedCategories[category] ? <FaChevronDown /> : <FaChevronRight />}
+                        {expandedCategories[category] ? (
+                          <FaChevronDown />
+                        ) : (
+                          <FaChevronRight />
+                        )}
                       </span>
                       <input
                         type="radio"
@@ -240,26 +308,35 @@ const Rental = () => {
                       />
                       <span className="ml-3 text-gray-700">{category}</span>
                     </div>
-                    {expandedCategories[category] && subcategories.length > 0 && (
-                      <div className="pl-12 bg-[#F9FEFF]">
-                        {subcategories.map(subcategory => (
-                          <div key={subcategory} className="flex items-center p-3 border-t border-gray-200 hover:bg-[#F1FAFB] cursor-pointer"
-                            onClick={() => {
-                              handleCategorySelect(category);
-                              handleSubcategorySelect(subcategory);
-                            }}>
-                            <input
-                              type="radio"
-                              name="subcategory"
-                              checked={selectedCategory === category && selectedSubcategory === subcategory}
-                              readOnly
-                              className="form-radio h-5 w-5 text-[#016D6D]"
-                            />
-                            <span className="ml-3 text-gray-700">{subcategory}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {expandedCategories[category] &&
+                      subcategories.length > 0 && (
+                        <div className="pl-12 bg-[#F9FEFF]">
+                          {subcategories.map((subcategory) => (
+                            <div
+                              key={subcategory}
+                              className="flex items-center p-3 border-t border-gray-200 hover:bg-[#F1FAFB] cursor-pointer"
+                              onClick={() => {
+                                handleCategorySelect(category);
+                                handleSubcategorySelect(subcategory);
+                              }}
+                            >
+                              <input
+                                type="radio"
+                                name="subcategory"
+                                checked={
+                                  selectedCategory === category &&
+                                  selectedSubcategory === subcategory
+                                }
+                                readOnly
+                                className="form-radio h-5 w-5 text-[#016D6D]"
+                              />
+                              <span className="ml-3 text-gray-700">
+                                {subcategory}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                   </div>
                 ))}
               </div>
@@ -268,68 +345,106 @@ const Rental = () => {
             {/* Form Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Product Name*</label>
-                <input 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent" 
-                  value={formData.name} 
-                  onChange={e => setFormData({ ...formData, name: e.target.value })} 
-                  required 
+                <label className="block text-sm font-medium text-gray-700">
+                  Product Name*
+                </label>
+                <input
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  required
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Price (₹)*</label>
-                <input 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent" 
-                  type="number" 
-                  value={formData.price} 
-                  onChange={e => setFormData({ ...formData, price: e.target.value })} 
-                  required 
+                <label className="block text-sm font-medium text-gray-700">
+                  Cost per day (₹)*
+                </label>
+                <input
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent"
+                  type="number"
+                  value={formData.price}
+                  onChange={(e) =>
+                    setFormData({ ...formData, price: e.target.value })
+                  }
+                  required
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Duration (Days)*</label>
-                <input 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent" 
-                  type="number" 
-                  value={formData["duration[days]"]} 
-                  onChange={e => setFormData({ ...formData, "duration[days]": e.target.value })} 
-                  required 
+                <label className="block text-sm font-medium text-gray-700">
+                  Duration (Days)*
+                </label>
+                <input
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent"
+                  type="number"
+                  value={formData["duration[days]"]}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      "duration[days]": e.target.value,
+                    })
+                  }
+                  required
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">City*</label>
-                <select 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent" 
-                  value={formData["location[city]"]} 
-                  onChange={e => setFormData({ ...formData, "location[city]": e.target.value })}
+                <label className="block text-sm font-medium text-gray-700">
+                  City*
+                </label>
+                <select
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent"
+                  value={formData["location[city]"]}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      "location[city]": e.target.value,
+                    })
+                  }
                   required
                 >
                   <option value="">Select City</option>
-                  {cities.map(city => (
-                    <option key={city} value={city}>{city}</option>
+                  {cities.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
                   ))}
                 </select>
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Address*</label>
-                <input 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent" 
-                  value={formData["location[address]"]} 
-                  onChange={e => setFormData({ ...formData, "location[address]": e.target.value })} 
-                  required 
+                <label className="block text-sm font-medium text-gray-700">
+                  Address*
+                </label>
+                <input
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent"
+                  value={formData["location[address]"]}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      "location[address]": e.target.value,
+                    })
+                  }
+                  required
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Product Condition*</label>
-                <select 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent" 
-                  value={formData.productCondition} 
-                  onChange={e => setFormData({ ...formData, productCondition: e.target.value })}
+                <label className="block text-sm font-medium text-gray-700">
+                  Product Condition*
+                </label>
+                <select
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent"
+                  value={formData.productCondition}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      productCondition: e.target.value,
+                    })
+                  }
                   required
                 >
                   <option value="">Select Condition</option>
@@ -342,13 +457,17 @@ const Rental = () => {
               </div>
 
               <div className="col-span-2 space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Description*</label>
-                <textarea 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent" 
-                  rows="4" 
-                  value={formData.description} 
-                  onChange={e => setFormData({ ...formData, description: e.target.value })} 
-                  required 
+                <label className="block text-sm font-medium text-gray-700">
+                  Description*
+                </label>
+                <textarea
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent"
+                  rows="4"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  required
                 />
               </div>
             </div>
@@ -356,23 +475,25 @@ const Rental = () => {
             {/* Image Upload Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700">Main Product Image*</label>
-                <input 
-                  type="file" 
-                  accept="image/*" 
+                <label className="block text-sm font-medium text-gray-700">
+                  Main Product Image*
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
                   onChange={handleProductImageUpload}
                   className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#1399c6] file:text-white hover:file:bg-[#117a9c]"
                 />
                 {formData.productImage && (
                   <div className="relative w-24 h-24 border rounded-lg overflow-hidden">
-                    <img 
-                      src={URL.createObjectURL(formData.productImage)} 
-                      alt="Main product" 
-                      className="w-full h-full object-cover" 
+                    <img
+                      src={URL.createObjectURL(formData.productImage)}
+                      alt="Main product"
+                      className="w-full h-full object-cover"
                     />
-                    <button 
-                      type="button" 
-                      className="absolute top-0 right-0 bg-red-500 text-white p-1 text-xs rounded-bl-lg" 
+                    <button
+                      type="button"
+                      className="absolute top-0 right-0 bg-red-500 text-white p-1 text-xs rounded-bl-lg"
                       onClick={handleRemoveProductImage}
                     >
                       ✕
@@ -382,25 +503,30 @@ const Rental = () => {
               </div>
 
               <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700">Additional Images</label>
-                <input 
-                  type="file" 
-                  multiple 
-                  accept="image/*" 
+                <label className="block text-sm font-medium text-gray-700">
+                  Additional Images
+                </label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
                   onChange={handleAdditionalImagesUpload}
                   className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#1399c6] file:text-white hover:file:bg-[#117a9c]"
                 />
                 <div className="flex flex-wrap gap-2">
                   {formData.additionalImages.map((img, idx) => (
-                    <div key={idx} className="relative w-24 h-24 border rounded-lg overflow-hidden">
-                      <img 
-                        src={URL.createObjectURL(img)} 
-                        alt={`Additional ${idx + 1}`} 
-                        className="w-full h-full object-cover" 
+                    <div
+                      key={idx}
+                      className="relative w-24 h-24 border rounded-lg overflow-hidden"
+                    >
+                      <img
+                        src={URL.createObjectURL(img)}
+                        alt={`Additional ${idx + 1}`}
+                        className="w-full h-full object-cover"
                       />
-                      <button 
-                        type="button" 
-                        className="absolute top-0 right-0 bg-red-500 text-white p-1 text-xs rounded-bl-lg" 
+                      <button
+                        type="button"
+                        className="absolute top-0 right-0 bg-red-500 text-white p-1 text-xs rounded-bl-lg"
                         onClick={() => handleRemoveAdditionalImage(idx)}
                       >
                         ✕
@@ -412,9 +538,9 @@ const Rental = () => {
             </div>
 
             <div className="flex justify-center mt-8">
-              <button 
-                type="submit" 
-                disabled={isSubmitting} 
+              <button
+                type="submit"
+                disabled={isSubmitting}
                 className="bg-[#1399c6] hover:bg-[#117a9c] text-white font-bold py-3 px-8 rounded-lg transition-colors"
               >
                 {isSubmitting ? "Submitting..." : "Submit Listing"}

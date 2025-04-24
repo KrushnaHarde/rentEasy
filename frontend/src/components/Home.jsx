@@ -350,7 +350,7 @@ const Recommendations = () => {
                     alt={product.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      console.error("Image failed to load:", product.productImage);
+                      // console.error("Image failed to load:");
                       e.target.onerror = null; // Prevent infinite loop
                       e.target.src = 'https://via.placeholder.com/400?text=No+Image';
                     }}
