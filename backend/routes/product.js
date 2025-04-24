@@ -11,7 +11,7 @@ router.get('/:id', productController.recordProductView,productController.getProd
 
 // Get categories, subcategories, and locations
 router.get('/metadata/categories', productController.getCategories);  // New route for categories
-router.post("/get-subcategories/", productController.getSubcategories); // :category is optional
+router.get('/metadata/subcategories/:category', productController.getSubcategories); 
 
 router.get('/metadata/all-categories', productController.getCategoriesAndSubcategories);
 router.get('/metadata/locations', productController.getLocations);
@@ -44,19 +44,16 @@ router.get('/user/products',
 
 // To get product by category
 router.get('/category/:category',
-    requireAuth('token'),
     productController.getProductsByCategory
 );
 
 // To get Product by Subcategory
 router.get('/category/:category/:subcategory',
-    requireAuth('token'),
     productController.getProductsBySubcategory
 );
 
 // New location-based route
 router.get('/location/:city',
-    requireAuth('token'),
     productController.getProductsByLocation
 );
 
