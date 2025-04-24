@@ -34,7 +34,7 @@ const Rental = () => {
     "location[address]": "",
     productImage: null,
     additionalImages: [],
-    productCondition: "Good"
+    productCondition: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -169,7 +169,7 @@ const Rental = () => {
         "location[address]": "",
         productImage: null,
         additionalImages: [],
-        productCondition: "Good"
+        productCondition: ""
       });
     } catch (err) {
       if (err.response) {
@@ -332,6 +332,7 @@ const Rental = () => {
                   onChange={e => setFormData({ ...formData, productCondition: e.target.value })}
                   required
                 >
+                  <option value="">Select Condition</option>
                   <option value="Good">Good</option>
                   <option value="Like New">Like New</option>
                   <option value="Brand New">Brand New</option>
