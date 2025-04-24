@@ -8,7 +8,7 @@ import Profile from "./components/Profile";
 import SearchResult from './components/SearchResult';
 import ProductDetail from "./components/ProductDetail";
 import Cart from "./components/Cart";
-import Rent from "./components/Rent";
+import Rental from "./components/Rental";
 import Notification from "./components/Notifications";
 import CategoryProducts from "./components/CategoryProducts";
 
@@ -29,7 +29,7 @@ function App() {
         <Route path="/search" element={<SearchResult />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/rent" element={<Rent />} />
+        <Route path="/rental" element={<Rental />} />
         <Route path="profile" element={<Profile />} />
         <Route path="notifications" element={<Notification />} />
 

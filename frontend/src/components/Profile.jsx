@@ -362,7 +362,7 @@ function App() {
   }, [activeSection]);
 
   const handleRentProductClick = () => {
-    navigate("/rent");
+    navigate("/rental");
   };
 
   const handleViewProductDetails = (productId) => {
