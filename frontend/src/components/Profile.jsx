@@ -23,7 +23,7 @@ function App() {
     email: "",
     phone: "",
     avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "https://img.freepik.com/premium-psd/contact-icon-illustration-isolated_23-2151903357.jpg",
   });
 
   const [newName, setNewName] = useState(profile.name);
@@ -537,7 +537,7 @@ function App() {
           </p>
           <button
             onClick={handleRentProductClick}
-            className="mt-4 px-4 py-2 bg-[#096192] text-white rounded-lg hover:bg-[#074e75] transition-colors"
+            className="mt-4 px-4 py-2 bg-[#1399c6] text-white rounded-lg hover:bg-[#074e75] transition-colors"
           >
             List a Product
           </button>
@@ -639,7 +639,7 @@ function App() {
           </p>
           <button
             onClick={() => navigate("/")}
-            className="mt-4 px-4 py-2 bg-[#096192] text-white rounded-lg hover:bg-[#074e75] transition-colors"
+            className="mt-4 px-4 py-2 bg-[#1399c6] text-white rounded-lg hover:bg-[#074e75] transition-colors"
           >
             Browse Products
           </button>
@@ -753,7 +753,7 @@ function App() {
   const renderEditProfileForm = () => {
     return (
       <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-[#096192]">Edit Profile</h2>
+        <h2 className="text-3xl font-bold text-[#1399c6]">Edit Profile</h2>
         <p className="text-gray-600">
           Update your personal and security details.
         </p>
@@ -781,7 +781,7 @@ function App() {
 
           {/* Change Password */}
           <div>
-            <h4 className="text-lg font-semibold mt-6 text-[#0e8c7f]">
+            <h4 className="text-lg font-semibold mt-6 text-[#1399c6]">
               Change Password
             </h4>
             <label className="text-sm text-gray-600">Old Password</label>
@@ -803,7 +803,7 @@ function App() {
           {/* Save Button */}
           <button
             onClick={handleSaveChanges}
-            className="mt-4 px-4 py-2 bg-[#096192] text-white rounded-lg hover:bg-[#074e75]"
+            className="mt-4 px-4 py-2 bg-[#1399c6] text-white rounded-lg hover:bg-[#074e75]"
           >
             Save Changes
           </button>
@@ -818,7 +818,7 @@ function App() {
         return (
           <div className="space-y-4">
             <div>
-              <h2 className="text-3xl font-bold text-[#096192]">My Rentals</h2>
+              <h2 className="text-3xl font-bold text-[#1399c6]">My Rentals</h2>
               <p className="text-gray-600">Products you've booked for rent.</p>
             </div>
             {renderRentalsByStatus()}
@@ -829,20 +829,20 @@ function App() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-3xl font-bold text-[#096192]">
+                <h2 className="text-3xl font-bold text-[#1399c6]">
                   My Listings
                 </h2>
                 <p className="text-gray-600">
                   Products you've listed for rent.
                 </p>
               </div>
-              <button
+              {/* <button
                 onClick={handleRentProductClick}
                 className="px-4 py-2 bg-[#0e8c7f] text-white rounded-lg hover:bg-[#086b5e] transition-colors flex items-center"
               >
                 <Package className="w-4 h-4 mr-2" />
                 Add New Listing
-              </button>
+              </button> */}
             </div>
             {renderMyListings()}
           </div>
@@ -851,7 +851,7 @@ function App() {
         console.log("Alerts:", alerts.length);
         return (
           <div>
-            <h2 className="text-3xl font-bold text-[#096192]">Alerts</h2>
+            <h2 className="text-3xl font-bold text-[#1399c6]">Alerts</h2>
             <p className="text-gray-600">
               Review and respond to rental requests for your listings.
             </p>
@@ -1029,7 +1029,7 @@ function App() {
       default:
         return (
           <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-[#096192]">
+            <h2 className="text-3xl font-bold text-[#1399c6]">
               Profile Information
             </h2>
             <p className="text-gray-600">
@@ -1042,7 +1042,7 @@ function App() {
                   <h3 className="text-sm font-medium text-gray-500">
                     Full Name
                   </h3>
-                  <p className="mt-1 text-lg font-medium text-[#096192]">
+                  <p className="mt-1 text-lg font-medium text-[#1399c6]">
                     {profile.name}
                   </p>
                 </div>
@@ -1050,7 +1050,7 @@ function App() {
                   <h3 className="text-sm font-medium text-gray-500">
                     Email Address
                   </h3>
-                  <p className="mt-1 text-lg font-medium text-[#096192]">
+                  <p className="mt-1 text-lg font-medium text-[#1399c6]">
                     {profile.email}
                   </p>
                 </div>
@@ -1059,7 +1059,7 @@ function App() {
                     <h3 className="text-sm font-medium text-gray-500">
                       Phone Number
                     </h3>
-                    <p className="mt-1 text-lg font-medium text-[#096192]">
+                    <p className="mt-1 text-lg font-medium text-[#1399c6]">
                       {profile.phone}
                     </p>
                   </div>
@@ -1074,7 +1074,7 @@ function App() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-[#096192] text-xl">Loading profile...</div>
+        <div className="text-[#1399c6] text-xl">Loading profile...</div>
       </div>
     );
   }
@@ -1088,41 +1088,42 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-white geometric-background flex items-center justify-center">
+    <div className="h-screen overflow-hidden bg-white geometric-background flex justify-center items-start pt-12 relative">
       <div className="absolute top-0 left-0 w-64 h-64 bg-[#8968CD]/10 rounded-full blur-3xl" />
       <div className="absolute top-20 right-0 w-96 h-96 bg-[#24aae2]/10 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#0e8c7f]/10 rounded-full blur-3xl" />
 
-      <div className="w-full max-w-6xl mx-auto px-4 py-8 z-10">
-        <div className="bg-white/40 rounded-xl shadow-lg overflow-hidden relative backdrop-blur-sm border border-white/20">
+      <div className="w-full h-[90vh] max-w-6xl px-4 py-8 z-10">
+        <div className="bg-white/40 rounded-xl shadow-[0_4px_20px_0_rgba(0,0,0,0.1),0_-4px_20px_0_rgba(0,0,0,0.05)]
+ overflow-hidden relative backdrop-blur-sm border border-white/20">
           <div className="flex flex-col md:flex-row">
             {/* Left Section */}
-            <div className="w-full md:w-1/3 bg-gradient-to-br from-[#096192]/10 via-[#1399c6]/5 to-transparent p-6">
+            <div className="w-full md:w-1/3 bg-gradient-to-br p-6">
               <div className="space-y-6">
                 <div className="text-center">
                   <div className="relative inline-block">
                     <img
                       src={profile.avatar}
                       alt="Profile"
-                      className="w-32 h-32 rounded-full mx-auto border-4 border-white/80 transition-transform hover:scale-105 shadow-lg"
+                      className="w-20 h-20 rounded-full mx-auto border-4 border-white/80 transition-transform hover:scale-105 shadow-lg"
                     />
                     <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#096192]/10 to-transparent"></div>
                   </div>
                   <div className="mt-4 space-y-2">
-                    <h3 className="text-xl font-semibold text-[#096192]">
+                    <h3 className="text-xl font-semibold text-[#1399c6]">
                       {profile.name}
                     </h3>
                     <p className="text-sm text-[#1399c6]">{profile.email}</p>
                   </div>
                 </div>
 
-                <button
+                {/*<button
                   className="w-full px-4 py-2 bg-[#0e8c7f]/10 rounded-lg hover:bg-[#0e8c7f]/20 transition-colors backdrop-blur-sm border border-[#0e8c7f]/20 flex items-center justify-center text-[#0e8c7f]"
                   onClick={handleRentProductClick}
                 >
                   <Package className="w-4 h-4 mr-2" />
                   Rent a Product
-                </button>
+                </button>*/}
 
                 <nav className="space-y-2">
                   {[
@@ -1143,7 +1144,7 @@ function App() {
                           ? handleLogout()
                           : setActiveSection(item.id)
                       }
-                      className={`w-full px-4 py-2 rounded-lg flex items-center transition-all border border-[#1399c6]/10 backdrop-blur-sm text-[#096192] ${
+                      className={`w-full px-4 py-2 rounded-lg flex items-center transition-all border border-[#1399c6]/10 backdrop-blur-sm text-[#1399c6] ${
                         activeSection === item.id
                           ? "bg-[#096192]/10"
                           : "hover:bg-[#096192]/5"
