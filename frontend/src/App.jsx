@@ -10,6 +10,7 @@ import ProductDetail from "./components/ProductDetail";
 import Cart from "./components/Cart";
 import Rent from "./components/Rent";
 import Notification from "./components/Notifications";
+import Legal from "./components/Legal";
 
 import './index.css';  // Or './App.css' if that's where you put the Tailwind imports
 
@@ -30,6 +31,8 @@ function App() {
         <Route path="/rent" element={<Rent />} />
         <Route path="profile" element={<Profile />} />
         <Route path="notifications" element={<Notification />} />
+        <Route path="/legal" element={<Legal/>} />
+
 
       </Routes>
     </Router>
