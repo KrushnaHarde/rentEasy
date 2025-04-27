@@ -440,7 +440,7 @@ function App() {
         <div className="flex items-start">
           {product.productImage ? (
             <img
-              src={`${baseURL}${product.productImage}`}
+              src={product.productImage}
               alt={product.name}
               className="w-24 h-24 object-cover rounded-lg mr-4"
               onError={(e) => {
@@ -556,7 +556,7 @@ function App() {
             <div className="flex items-start">
               {product.productImage ? (
                 <img
-                  src={`${baseURL}${product.productImage}`}
+                  src={product.productImage}
                   alt={product.name}
                   className="w-24 h-24 object-cover rounded-lg mr-4"
                   onError={(e) => {
@@ -836,13 +836,13 @@ function App() {
                   Products you've listed for rent.
                 </p>
               </div>
-              {/* <button
+              <button
                 onClick={handleRentProductClick}
                 className="px-4 py-2 bg-[#0e8c7f] text-white rounded-lg hover:bg-[#086b5e] transition-colors flex items-center"
               >
                 <Package className="w-4 h-4 mr-2" />
                 Add New Listing
-              </button> */}
+              </button> 
             </div>
             {renderMyListings()}
           </div>
@@ -912,7 +912,7 @@ function App() {
                         <div className="flex items-start mb-6">
                           {selectedRental.product?.productImage ? (
                             <img
-                              src={`${baseURL}${selectedRental.product.productImage}`}
+                              src={`${selectedRental.product.productImage}`}
                               alt={selectedRental.product.name}
                               className="w-32 h-32 object-cover rounded-lg mr-6"
                               onError={(e) => {

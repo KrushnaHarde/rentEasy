@@ -134,6 +134,19 @@ const CategoryProducts = () => {
     }
   }, [subcategories, encodedCategoryName]);
 
+  // Helper function to handle image URLs properly
+  const getImageUrl = (imageUrl) => {
+    if (!imageUrl) return null;
+    
+    // If it's already a complete URL (from Cloudinary), use it directly
+    if (imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+    
+    // Otherwise, append to the local server URL
+    return `http://localhost:5000${imageUrl}`;
+  };
+
   // Navigate to product detail page
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
@@ -197,7 +210,7 @@ const CategoryProducts = () => {
                 {product.productImage ? (
                   <div className="h-48 bg-gray-200">
                     <img
-                      src={`http://localhost:5000${product.productImage}`}
+                      src={getImageUrl(product.productImage)}
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />
@@ -286,7 +299,7 @@ const CategoryProducts = () => {
                         {product.productImage ? (
                           <div className="h-48 bg-gray-200">
                             <img
-                              src={`http://localhost:5000${product.productImage}`}
+                              src={getImageUrl(product.productImage)}
                               alt={product.name}
                               className="w-full h-full object-cover"
                             />

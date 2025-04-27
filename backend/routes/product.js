@@ -4,40 +4,48 @@ const router = express.Router();
 const productController = require('../controllers/productController');
 const { requireAuth } = require('../middleware/authentication');
 
+// Debug middleware - add this to help diagnose upload issues
+const debugRequest = (req, res, next) => {
+  console.log(`[DEBUG] ${req.method} ${req.originalUrl}`);
+  console.log('[DEBUG] Content-Type:', req.headers['content-type']);
+  next();
+};
+
 // Public routes
 router.get('/', productController.getAllProducts);
-router.get('/:id', productController.recordProductView,productController.getProduct);
-
+router.get('/:id', productController.recordProductView, productController.getProduct);
 
 // Get categories, subcategories, and locations
-router.get('/metadata/categories', productController.getCategories);  // New route for categories
-router.get('/metadata/subcategories/:category', productController.getSubcategories); 
-
+router.get('/metadata/categories', productController.getCategories);  // Route for categories
+router.get('/metadata/subcategories/:category', productController.getSubcategories);
 router.get('/metadata/all-categories', productController.getCategoriesAndSubcategories);
 router.get('/metadata/locations', productController.getLocations);
 
 // Protected routes - require authentication
-router.post('/', 
+// Add debug middleware before upload handlers for POST/PUT requests
+router.post('/',
     requireAuth('token'),
+    debugRequest,  // Add debug middleware
     productController.uploadProductImages,
     productController.createProduct
 );
 
-// update product
+// Update product
 router.put('/:id',
     requireAuth('token'),
+    debugRequest,  // Add debug middleware
     productController.uploadProductImages,
     productController.updateProduct
 );
 
 // To delete the product
-router.delete('/:id', 
+router.delete('/:id',
     requireAuth('token'),
     productController.deleteProduct
 );
 
-// can be used for myListing 
-router.get('/user/products', 
+// Can be used for myListing
+router.get('/user/products',
     requireAuth('token'),
     productController.getUserProducts
 );

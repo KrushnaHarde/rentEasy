@@ -24,6 +24,7 @@ const SearchResult = () => {
         }
         
         const data = await response.json();
+        console.log("Fetched products:", data);
         setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -43,9 +44,11 @@ const SearchResult = () => {
       return;
     }
 
-    const results = products.filter(product =>
-      product.name.toLowerCase().includes(query.toLowerCase())
-    );
+    const results = products.filter(product => {
+      // Check if the product has a name property, otherwise use title
+      const productName = product.name || product.title || "";
+      return productName.toLowerCase().includes(query.toLowerCase());
+    });
     
     setFilteredProducts(results);
   }, [products, query]);
@@ -53,6 +56,12 @@ const SearchResult = () => {
   // Navigate to product detail page
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
+  };
+
+  // Handle image errors
+  const handleImageError = (e) => {
+    e.target.src = '/placeholder-image.jpg'; // Path to your placeholder image
+    e.target.onerror = null; // Prevents infinite loop if placeholder also fails
   };
 
   if (isLoading) {
@@ -111,10 +120,10 @@ const SearchResult = () => {
               {product.productImage ? (
                 <div className="h-48 bg-gray-200">
                   <img
-                  
-                  src={`http://localhost:5000${product.productImage}`}
-                    alt={product.name}
+                    src={product.productImage} // Use the full Cloudinary URL directly
+                    alt={product.name || product.title}
                     className="w-full h-full object-cover"
+                    onError={handleImageError}
                   />
                 </div>
               ) : (
@@ -124,13 +133,13 @@ const SearchResult = () => {
               )}
               <div className="p-4">
                 <h3 className="font-semibold text-lg mb-1 text-gray-800">
-                  {product.name}
+                  {product.name || product.title}
                 </h3>
                 <div className="text-sm text-gray-500 mb-2">
                   {product.category}
                 </div>
                 <div className="text-blue-600 font-bold">
-                  ₹{product.price}
+                  ₹{product.price || product.rentPrice}
                 </div>
               </div>
             </div>

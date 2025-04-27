@@ -2,16 +2,86 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+// Modal component for notifications with blur background
+const NotificationModal = ({ isOpen, onClose, message, type }) => {
+  if (!isOpen) return null;
+
+  // Auto close after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, [isOpen, onClose]);
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-md transition-opacity">
+      <div className="bg-white bg-opacity-90 rounded-lg shadow-xl w-80 overflow-hidden transform transition-all">
+        <div className={`p-1 ${type === 'success' ? 'bg-[#1399c6]' : 'bg-red-500'}`}></div>
+        <div className="p-4">
+          <div className="flex items-center mb-3">
+            {type === 'success' ? (
+              <div className="bg-green-100 rounded-full p-2 mr-3">
+                <svg className="w-6 h-6 text-[#1399c6]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            ) : (
+              <div className="bg-red-100 rounded-full p-2 mr-3">
+                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+            )}
+            <h3 className="text-lg font-medium text-gray-900">
+              {type === 'success' ? 'Success' : 'Error'}
+            </h3>
+          </div>
+          <p className="text-gray-700">{message}</p>
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={onClose}
+              className={`px-4 py-2 rounded-md text-white ${type === 'success' ? 'bg-[#1399c6] hover:bg-[#1399c6]' : 'bg-red-500 hover:bg-red-600'} transition-colors`}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const googleBtnRef = useRef(null);
   const [googleScriptLoaded, setGoogleScriptLoaded] = useState(false);
+  
+  // State for modal
+  const [modal, setModal] = useState({
+    isOpen: false,
+    message: "",
+    type: "success" // 'success' or 'error'
+  });
 
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
+
+  const closeModal = () => {
+    setModal({ ...modal, isOpen: false });
+  };
+
+  const showNotification = (message, type) => {
+    setModal({
+      isOpen: true,
+      message,
+      type
+    });
+  };
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -26,7 +96,7 @@ const Login = () => {
       });
       
       console.log("Regular login response:", res.data);
-      alert(res.data.message);
+      showNotification(res.data.message, "success");
       
       // Store user info
       localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -40,10 +110,14 @@ const Login = () => {
       }
       
       window.dispatchEvent(new Event("loginStateChanged"));
-      navigate("/");
+      
+      // Slight delay before navigation to allow users to see the success message
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
     } catch (err) {
       console.error("Login error:", err);
-      alert(err.response?.data?.message || "Login failed");
+      showNotification(err.response?.data?.message || "Login failed", "error");
     }
   };
 
@@ -56,7 +130,7 @@ const Login = () => {
       }, { withCredentials: true });
   
       console.log("Server response:", result.data);
-      alert(result.data.message);
+      showNotification(result.data.message, "success");
       
       // Store user and token securely in localStorage
       localStorage.setItem("user", JSON.stringify(result.data.user));
@@ -65,11 +139,13 @@ const Login = () => {
       // Fire login state change event
       window.dispatchEvent(new Event("loginStateChanged"));
   
-      // Navigate to home page
-      navigate("/");
+      // Navigate to home page after a short delay
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
     } catch (error) {
       console.error("Google Auth Error", error);
-      alert(error.response?.data?.message || "Google authentication failed");
+      showNotification(error.response?.data?.message || "Google authentication failed", "error");
     }
   };
 
@@ -202,6 +278,14 @@ const Login = () => {
           </a>
         </p>
       </div>
+      
+      {/* Notification Modal */}
+      <NotificationModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        message={modal.message}
+        type={modal.type}
+      />
     </div>
   );
 };

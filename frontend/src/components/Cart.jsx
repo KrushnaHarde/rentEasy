@@ -74,7 +74,7 @@ const Cart = () => {
               <Link to={`/product/${item._id}`}>
                 {item.productImage && (
                   <img 
-                    src={`${baseURL}${item.productImage}`}
+                    src={`${item.productImage}`}
                     alt={item.name} 
                     className="w-28 h-28 object-cover rounded-lg shadow-sm" 
                     onError={(e) => {

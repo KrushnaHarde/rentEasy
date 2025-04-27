@@ -27,6 +27,24 @@ const ProductDetail = () => {
   // For file preview
   const [previewImages, setPreviewImages] = useState([]);
   
+  // Function to ensure image URLs are complete
+  const getCompleteImageUrl = (url) => {
+    // If URL is null or undefined
+    if (!url) return '';
+    
+    // If URL is already absolute (starts with http or https), return as is
+    if (url.startsWith('http')) return url;
+    
+    // If it's a Cloudinary path (contains 'RentEasy/')
+    if (url.includes('RentEasy/')) {
+      // Make sure to use the correct cloud name from your environment
+      return `https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/${url}`;
+    }
+    
+    // Fallback for local development or other relative paths
+    return `http://localhost:5000${url.startsWith('/') ? '' : '/'}${url}`;
+  };
+  
   // Get tomorrow's date as a default start date
   const getTomorrow = () => {
     const tomorrow = new Date();
@@ -53,7 +71,7 @@ const ProductDetail = () => {
         console.log("Fetching product with ID:", id);
         const res = await fetch(`http://localhost:5000/product/${id}`, {withCredentials: true});
         const data = await res.json();
-        console.log("Product response:", res);
+        console.log("Product data received:", data);
         setProduct(data);
         setSelectedImage(0);
       } catch (err) {
@@ -67,8 +85,6 @@ const ProductDetail = () => {
       try {
         setReviewsLoading(true);
         const res = await fetch(`http://localhost:5000/review/product/${id}`);
-        // console.log("id: ", id);
-        // console.log("Reviews response:", res);
         if (!res.ok) {
           throw new Error("Failed to fetch reviews");
         }
@@ -247,12 +263,11 @@ const ProductDetail = () => {
         body: formData,
         credentials: 'include', // Include cookies for auth
       });
-        console.log("Review response:", response);
+      console.log("Review response:", response);
 
       const data = await response.json();
       
       if (!response.ok) {
-        
         throw new Error(data.error || 'Failed to submit review');
       }
       
@@ -331,11 +346,10 @@ const ProductDetail = () => {
   if (loading) return <div className="text-center mt-10">Loading...</div>;
   if (!product) return <div className="text-center mt-10">Product not found</div>;
   
-  // Prepare all images array for navigation
-  const baseURL = "http://localhost:5000";
+  // Prepare all images array for navigation - properly handle both absolute and relative URLs
   const allImages = [
-    baseURL + product.productImage,
-    ...(product.additionalImages || []).map(img => baseURL + img)
+    getCompleteImageUrl(product.productImage),
+    ...(product.additionalImages || []).map(img => getCompleteImageUrl(img))
   ];
 
   return (
@@ -349,6 +363,10 @@ const ProductDetail = () => {
               src={allImages[selectedImage]}
               alt={product.name}
               className="max-h-full max-w-full object-contain"
+              onError={(e) => {
+                console.error("Image failed to load:", allImages[selectedImage]);
+                e.target.src = "https://via.placeholder.com/400?text=Image+Not+Found";
+              }}
             />
           </div>
           
@@ -366,6 +384,9 @@ const ProductDetail = () => {
                   src={img}
                   alt={`view-${i+1}`}
                   className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/100?text=Image";
+                  }}
                 />
               </div>
             ))}
@@ -570,9 +591,12 @@ const ProductDetail = () => {
                     {review.images.map((img, idx) => (
                       <div key={idx} className="h-20 w-20 rounded-lg overflow-hidden shadow-sm">
                         <img 
-                          src={baseURL + img} 
+                          src={getCompleteImageUrl(img)}
                           alt={`Review image ${idx+1}`} 
                           className="h-full w-full object-cover"
+                          onError={(e) => {
+                            e.target.src = "https://via.placeholder.com/100?text=Review";
+                          }}
                         />
                       </div>
                     ))}
@@ -629,31 +653,20 @@ const ProductDetail = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <p className="font-medium text-lg">Review submitted successfully!</p>
-                  <p className="mt-2">Thank you for your feedback.</p>
+                  <h4 className="font-semibold text-lg">Thank You!</h4>
+                  <p>Your review has been submitted successfully.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmitReview} className="space-y-6">
                   {/* Rating */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Rating
-                    </label>
-                    <div className="flex">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                    <div className="flex items-center">
                       {renderSelectableStars()}
                     </div>
-                    {reviewForm.rating > 0 && (
-                      <p className="text-sm text-gray-500 mt-1">
-                        {reviewForm.rating === 5 ? "Excellent" : 
-                         reviewForm.rating === 4 ? "Very Good" :
-                         reviewForm.rating === 3 ? "Good" :
-                         reviewForm.rating === 2 ? "Fair" : "Poor"}
-                      </p>
-                    )}
                   </div>
-
-                  {/* Comment */}
-                  <div>
+                  
+                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Your Review
                     </label>

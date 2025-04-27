@@ -142,6 +142,7 @@ const approveRental = async (req, res) => {
 
         // Update rental status
         rental.status = 'approved';
+        
         await rental.save();
 
         // Create notification for the renter
