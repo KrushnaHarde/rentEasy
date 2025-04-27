@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from "lucide-react";
+// import LottieAnimation from './LottieAnimation';
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp} from "lucide-react";
 import { Button } from "./ui/Button";
 import { Check, Shield, Clock, PiggyBank } from 'lucide-react';
 import { Star } from 'lucide-react';
@@ -27,19 +28,19 @@ const Carousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const slides = [
     {
-      image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&q=80&w=1770&ixlib=rb-4.0.3",
+      image: "https://images.unsplash.com/photo-1650137938625-11576502aecd?q=80&w=1953&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       title: "Rent Anything, Anytime",
       description: "From electronics to furniture, find what you need without the commitment of ownership.",
       buttonText: "Browse Items",
     },
     {
-      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&q=80&w=1770&ixlib=rb-4.0.3",
+      image: "https://media.istockphoto.com/id/2201273539/vector/global-connection-network-background-world-map-high-speed-internet-technology-concept.jpg?s=612x612&w=0&k=20&c=-n1ZOWKX9xPWeDKC7hYXxCvaNRSf86224evT5DIPP2I=",
       title: "Safe & Secure Rentals",
       description: "Every transaction is protected. Rent with confidence on our secure platform.",
       buttonText: "How It Works",
     },
     {
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1770&ixlib=rb-4.0.3",
+      image: "https://media.istockphoto.com/id/2179981578/photo/unique-yellow-check-mark-sign-stand-out-from-the-crowd-concept-approved-vote-symbol-correct.jpg?s=612x612&w=0&k=20&c=r922MSLwNYH9PbrnM9sJ3L4maQNqoiWE3dPvcrxUCok=",
       title: "Verified Listings",
       description: "All items are verified by our quality team to ensure you get exactly what you expect.",
       buttonText: "Learn More",
@@ -63,36 +64,37 @@ const Carousel = () => {
   }, []);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative h-[680px] w-full overflow-hidden">
       {/* Slides */}
-      <div className="h-full w-full relative">
-        {slides.map((slide, index) => (
-          <div 
-            key={index}
-            className={`absolute inset-0 h-full w-full transition-opacity duration-700 ${
-              index === currentSlide ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
-          >
-            <div className="absolute inset-0 bg-black/30 z-10"></div>
-            <img 
-              src={slide.image} 
-              alt={slide.title} 
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 z-20 flex items-center">
-              <div className="container mx-auto px-6">
-                <div className="max-w-lg text-white">
-                  <h1 className="text-4xl md:text-6xl font-bold mb-4">{slide.title}</h1>
-                  <p className="text-xl mb-8">{slide.description}</p>
-                  <Button className="bg-rent-blue hover:bg-rent-dark-teal text-white py-3 px-8 text-lg">
-                    {slide.buttonText}
-                  </Button>
-                </div>
-              </div>
-            </div>
+      <div className="relative w-full h-[800px]">
+  {slides.map((slide, index) => (
+    <div 
+      key={index}
+      className={`absolute inset-0 h-full w-full transition-opacity duration-700 ${
+        index === currentSlide ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
+    >
+      <div className="absolute inset-0 bg-black/30 z-10"></div>
+      <img 
+        src={slide.image} 
+        alt={slide.title} 
+        className="h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 z-20 flex items-center">
+        <div className="container mx-auto px-6">
+          <div className="max-w-lg text-white">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">{slide.title}</h1>
+            <p className="text-xl mb-8">{slide.description}</p>
+            <Button className="bg-[#2AB3E6] hover:bg-[#016D6D] text-white py-3 px-8 text-lg">
+              {slide.buttonText}
+            </Button>
           </div>
-        ))}
+        </div>
       </div>
+    </div>
+  ))}
+</div>
+
       
       {/* Navigation Controls */}
       <button 
@@ -128,77 +130,151 @@ const Carousel = () => {
 };
 
 // Categories Component
+// import { useState } from 'react';
+// import { Laptop, Bike, Shirt, PenTool, Sofa, Camera, Car, BookOpen, Home as HomeIcon, ChevronDown, ChevronUp } from 'lucide-react';
+
 const categories = [
   {
     title: "Electronics",
     icon: <Laptop size={40} />,
-    color: "rent-light-blue",
-    hoverColor: "rent-blue",
+    color: "#1399c6",       // Light Blue
+    hoverColor: "#1171ba",  // Blue
+    subcategories: ["Laptops", "Smartphones", "Audio Equipment", "Gaming Consoles", "Cameras", "Drones", "Tablets", "Smart Watches"]
   },
   {
     title: "Bikes",
     icon: <Bike size={40} />,
-    color: "rent-sky-blue",
-    hoverColor: "rent-light-blue",
+    color: "#24aae2",
+    hoverColor: "#1399c6",
+    subcategories: ["Mountain Bikes", "Road Bikes", "Electric Bikes", "BMX", "Hybrid Bikes", "Cruisers", "Kids Bikes"]
   },
   {
     title: "Fashion",
     icon: <Shirt size={40} />,
-    color: "rent-blue",
-    hoverColor: "rent-dark-teal",
+    color: "#1171ba",
+    hoverColor: "#0e8c7f",
+    subcategories: ["Men's Clothing", "Women's Clothing", "Jewelry", "Watches", "Bags", "Accessories", "Shoes", "Formal Wear"]
   },
   {
     title: "Stationery",
     icon: <PenTool size={40} />,
-    color: "rent-green-teal",
-    hoverColor: "rent-dark-teal",
+    color: "#0e8c7f",
+    hoverColor: "#1399c6",
+    subcategories: ["Notebooks", "Pens & Pencils", "Art Supplies", "Office Equipment", "Planners", "Desk Accessories"]
   },
   {
     title: "Furniture",
     icon: <Sofa size={40} />,
-    color: "rent-dark-teal",
-    hoverColor: "rent-green-teal",
+    color: "#096192",
+    hoverColor: "#0e8c7f",
+    subcategories: ["Sofas", "Beds", "Dining Tables", "Office Furniture", "Outdoor Furniture", "Chairs", "Storage Units"]
   },
   {
     title: "Cameras",
     icon: <Camera size={40} />,
-    color: "rent-light-blue",
-    hoverColor: "rent-blue",
+    color: "#1399c6",
+    hoverColor: "#1171ba",
+    subcategories: ["DSLR", "Mirrorless", "Action Cameras", "Video Equipment", "Lenses", "Lighting", "Tripods"]
   },
   {
     title: "Vehicles",
     icon: <Car size={40} />,
-    color: "rent-blue",
-    hoverColor: "rent-dark-teal",
+    color: "#1171ba",
+    hoverColor: "#0e8c7f",
+    subcategories: ["Cars", "Motorcycles", "Vans", "Trucks", "RVs", "Boats", "Scooters", "Luxury Vehicles"]
   },
   {
     title: "Books",
     icon: <BookOpen size={40} />,
-    color: "rent-sky-blue",
-    hoverColor: "rent-light-blue",
+    color: "#24aae2",
+    hoverColor: "#1399c6",
+    subcategories: ["Fiction", "Non-Fiction", "Academic", "Children's Books", "Comics", "Magazines", "Reference"]
   },
   {
     title: "Real Estate",
     icon: <HomeIcon size={40} />,
-    color: "rent-green-teal",
-    hoverColor: "rent-dark-teal",
+    color: "#0e8c7f",
+    hoverColor: "#1399c6",
+    subcategories: ["Apartments", "Houses", "Office Spaces", "Commercial Property", "Vacation Rentals", "Event Venues"]
   },
 ];
 
-const CategoryCard = ({ title, icon, color, hoverColor }) => {
+const CategoryCard = ({ title, icon, color, hoverColor, subcategories }) => {
+  const [expanded, setExpanded] = useState(false);
+
   return (
-    <div className="relative group overflow-hidden">
-      <div className={`flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md border border-gray-100 
-                      hover:shadow-lg transition-all duration-300 h-full
-                      hover:border-${hoverColor} hover:-translate-y-1`}>
-        <div className={`p-4 rounded-full bg-${color}/10 text-${color} mb-4 
-                       group-hover:bg-${hoverColor}/10 group-hover:text-${hoverColor} transition-colors duration-300`}>
-          {icon}
-        </div>
-        <h3 className={`text-lg font-semibold text-gray-800 group-hover:text-${hoverColor} transition-colors duration-300`}>
-          {title}
-        </h3>
-        <div className={`absolute bottom-0 left-0 w-full h-1 bg-${color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`}></div>
+    <div className="relative group overflow-hidden h-48">
+      <div
+        className={`flex flex-col items-center justify-center p-6 bg-white rounded-xl shadow-md border border-gray-100 
+                    hover:shadow-lg transition-all duration-300 h-full 
+                    ${expanded ? "" : "hover:-translate-y-1"}`}
+        style={{
+          borderColor: expanded ? hoverColor : 'transparent',
+          cursor: 'pointer'
+        }}
+        onClick={() => setExpanded(!expanded)}
+      >
+        {!expanded ? (
+          <>
+            <div
+              className="p-4 rounded-full mb-4 transition-colors duration-300"
+              style={{
+                backgroundColor: `${color}1A`, // ~10% opacity
+                color: color,
+              }}
+            >
+              <span className="group-hover:transition-colors">{icon}</span>
+            </div>
+            <h3
+              className="text-lg font-semibold transition-colors duration-300 group-hover:text-black flex items-center gap-2"
+              style={{
+                color: color,
+              }}
+            >
+              {title} <ChevronDown size={16} />
+            </h3>
+            <div
+              className="absolute bottom-0 left-0 w-full h-1 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+              style={{
+                backgroundColor: hoverColor,
+              }}
+            ></div>
+          </>
+        ) : (
+          <div className="w-full h-full flex flex-col">
+            <div className="flex items-center justify-between mb-3 w-full">
+              <h3
+                className="text-lg font-semibold"
+                style={{
+                  color: color,
+                }}
+              >
+                {title}
+              </h3>
+              <div
+                className="p-1 rounded-full"
+                style={{
+                  backgroundColor: `${color}1A`,
+                  color: color,
+                }}
+              >
+                <ChevronUp size={16} />
+              </div>
+            </div>
+            <div className="overflow-y-auto flex-grow w-full pr-2 scrollbar-thin" style={{ maxHeight: "120px" }}>
+              <ul className="space-y-2">
+                {subcategories.map((subcat, idx) => (
+                  <li 
+                    key={idx} 
+                    className="text-gray-700 hover:text-gray-900 py-1 px-2 hover:bg-gray-50 rounded-md text-sm transition-colors cursor-pointer"
+                  >
+                    {subcat}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -206,11 +282,11 @@ const CategoryCard = ({ title, icon, color, hoverColor }) => {
 
 const Categories = () => {
   return (
-    <section id="categories" className="py-16 px-6 bg-gray-50">
+    <section id="categories" className="py-27 px-6 bg-gray-50">
       <div className="container mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-            Browse by <span className="text-rent-blue">Category</span>
+          <h2 className="text-3xl md:text-4xl font-bold mb-3">
+            Browse by <span style={{ color: '#1399c6' }}>Categories</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Discover the perfect rental from our wide selection of categories. Whether you need it for a day or a month, we've got you covered.
@@ -222,11 +298,12 @@ const Categories = () => {
             <CategoryCard key={index} {...category} />
           ))}
         </div>
-      </div>
+      </div>      
     </section>
   );
 };
 
+// export default Categories;
 
 
 
@@ -284,7 +361,7 @@ const Recommendations = () => {
   return (
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">Recommended For You</h2>
+        <h2 className="text-3xl font-bold text-center mb-8"><span style={{ color: '#1399c6' }}>Recommended</span> For You</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {recommendations.map((product) => (
             <div
@@ -338,36 +415,41 @@ const BrandHighlight = () => {
     <section className="py-24 relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-rent-light-blue"></div>
-        <div className="absolute top-1/2 -right-32 w-96 h-96 rounded-full bg-rent-blue"></div>
-        <div className="absolute -bottom-20 left-1/4 w-72 h-72 rounded-full bg-rent-green-teal"></div>
+  <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-[#AEE9F7]"></div>
+  <div className="absolute top-1/2 -right-32 w-96 h-96 rounded-full bg-[#2AB3E6]"></div>
+  <div className="absolute -bottom-20 left-1/4 w-72 h-72 rounded-full bg-[#00B3A4]"></div>
+</div>
+
+<div className="container mx-auto px-6 relative">
+  <div className="text-center max-w-4xl mx-auto">
+    <h2 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-[#AEE9F7] via-[#2AB3E6] to-[#016D6D] bg-clip-text text-transparent">
+      RentEasy
+    </h2>
+    <div className="h-1 w-24 bg-gradient-to-r from-[#AEE9F7] via-[#2AB3E6] to-[#016D6D] mx-auto mb-6 rounded-full"></div>
+    <p className="text-xl md:text-2xl text-gray-600 mb-8">
+      Your Smart Rental Companion
+    </p>
+    <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+      
+      <div className="flex items-center bg-white shadow-md rounded-xl p-4 px-6">
+        <div className="text-3xl font-bold text-[#1399c6] mr-3">10k+</div>
+        <div className="text-sm text-gray-600">Active Listings</div>
       </div>
       
-      <div className="container mx-auto px-6 relative">
-        <div className="text-center max-w-4xl mx-auto">
-          <h2 className="text-5xl md:text-7xl font-bold mb-6 bg-rent-gradient bg-clip-text text-transparent">
-            RentEasy
-          </h2>
-          <div className="h-1 w-24 bg-rent-gradient mx-auto mb-6 rounded-full"></div>
-          <p className="text-xl md:text-2xl text-gray-600 mb-8">
-            Your Smart Rental Companion
-          </p>
-          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-            <div className="flex items-center bg-white shadow-md rounded-xl p-4 px-6">
-              <div className="text-3xl font-bold text-rent-blue mr-3">10k+</div>
-              <div className="text-sm text-gray-600">Active Listings</div>
-            </div>
-            <div className="flex items-center bg-white shadow-md rounded-xl p-4 px-6">
-              <div className="text-3xl font-bold text-rent-dark-teal mr-3">50+</div>
-              <div className="text-sm text-gray-600">Cities Covered</div>
-            </div>
-            <div className="flex items-center bg-white shadow-md rounded-xl p-4 px-6">
-              <div className="text-3xl font-bold text-rent-green-teal mr-3">5k+</div>
-              <div className="text-sm text-gray-600">Happy Renters</div>
-            </div>
-          </div>
-        </div>
+      <div className="flex items-center bg-white shadow-md rounded-xl p-4 px-6">
+        <div className="text-3xl font-bold text-[#016D6D] mr-3">50+</div>
+        <div className="text-sm text-gray-600">Cities Covered</div>
       </div>
+      
+      <div className="flex items-center bg-white shadow-md rounded-xl p-4 px-6">
+        <div className="text-3xl font-bold text-[#00B3A4] mr-3">5k+</div>
+        <div className="text-sm text-gray-600">Happy Renters</div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
     </section>
   );
 };
@@ -375,7 +457,7 @@ const BrandHighlight = () => {
 // AboutUs Component
 const AboutUs = () => {
   return (
-    <section id="about" className="py-16 bg-white">
+    <section id="about" className="py-18 bg-white">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           {/* Image side */}
@@ -388,11 +470,11 @@ const AboutUs = () => {
               />
             </div>
             <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-xl shadow-lg animate-fade-in">
-              <div className="flex space-x-2">
-                <div className="w-2 h-2 rounded-full bg-rent-light-blue"></div>
-                <div className="w-2 h-2 rounded-full bg-rent-blue"></div>
-                <div className="w-2 h-2 rounded-full bg-rent-dark-teal"></div>
-              </div>
+            <div className="flex space-x-2">
+            <div className="w-2 h-2 rounded-full bg-[#1399c6]"></div>
+            <div className="w-2 h-2 rounded-full bg-[#2AB3E6]"></div>
+            <div className="w-2 h-2 rounded-full bg-[#016D6D]"></div>
+</div>
               <p className="font-medium text-gray-700 mt-1">Trusted by thousands</p>
             </div>
           </div>
@@ -400,7 +482,7 @@ const AboutUs = () => {
           {/* Text side */}
           <div className="space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-              About <span className="text-rent-blue">RentEasy</span>
+              About <span style={{ color: '#1399c6' }}>RentEasy</span>
             </h2>
             <p className="text-gray-600 text-lg">
               RentEasy is revolutionizing the way people access the items they need. Our platform connects those who want to rent with those who have items to offer, creating a community of sharing that reduces waste and increases accessibility.
@@ -410,45 +492,47 @@ const AboutUs = () => {
             </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-              <div className="flex items-start space-x-3">
-                <div className="bg-rent-light-blue/10 p-2 rounded-lg">
-                  <Check className="text-rent-light-blue w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Verified Renters</h4>
-                  <p className="text-gray-600 text-sm">All users are ID verified</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <div className="bg-rent-blue/10 p-2 rounded-lg">
-                  <Shield className="text-rent-blue w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Secure Payments</h4>
-                  <p className="text-gray-600 text-sm">Protected transactions</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <div className="bg-rent-green-teal/10 p-2 rounded-lg">
-                  <Clock className="text-rent-green-teal w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Flexible Durations</h4>
-                  <p className="text-gray-600 text-sm">Rent for days or months</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <div className="bg-rent-dark-teal/10 p-2 rounded-lg">
-                  <PiggyBank className="text-rent-dark-teal w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Save Money</h4>
-                  <p className="text-gray-600 text-sm">More affordable than buying</p>
-                </div>
-              </div>
+  <div className="flex items-start space-x-3">
+    <div className="bg-[#2AB3E6]/10 p-2 rounded-lg">
+      <Check className="text-[#2AB3E6] w-5 h-5" />
+    </div>
+    <div>
+      <h4 className="font-semibold text-gray-800">Verified Renters</h4>
+      <p className="text-gray-600 text-sm">All users are ID verified</p>
+    </div>
+  </div>
+
+  <div className="flex items-start space-x-3">
+    <div className="bg-[#2AB3E6]/10 p-2 rounded-lg">
+      <Shield className="text-[#2AB3E6] w-5 h-5" />
+    </div>
+    <div>
+      <h4 className="font-semibold text-gray-800">Secure Payments</h4>
+      <p className="text-gray-600 text-sm">Protected transactions</p>
+    </div>
+  </div>
+
+  <div className="flex items-start space-x-3">
+    <div className="bg-[#00B3A4]/10 p-2 rounded-lg">
+      <Clock className="text-[#00B3A4] w-5 h-5" />
+    </div>
+    <div>
+      <h4 className="font-semibold text-gray-800">Flexible Durations</h4>
+      <p className="text-gray-600 text-sm">Rent for days or months</p>
+    </div>
+  </div>
+
+  <div className="flex items-start space-x-3">
+    <div className="bg-[#016D6D]/10 p-2 rounded-lg">
+      <PiggyBank className="text-[#016D6D] w-5 h-5" />
+    </div>
+    <div>
+      <h4 className="font-semibold text-gray-800">Save Money</h4>
+      <p className="text-gray-600 text-sm">More affordable than buying</p>
+    </div>
+  </div>
+{/* </div> */}
+
             </div>
           </div>
         </div>
@@ -479,12 +563,20 @@ const testimonials = [
     image: "https://randomuser.me/api/portraits/women/63.jpg",
     rating: 4,
     text: "I regularly rent decor items for events through RentEasy. The variety is impressive, and the rental process is hassle-free. Highly recommend!"
+  },
+  {
+    name: "David Martinez",
+    title: "Freelance Videographer",
+    image: "https://randomuser.me/api/portraits/men/45.jpg",
+    rating: 4,
+    text: "I found exactly what I needed on RentEasy for my short film project. Affordable rates and trustworthy owners made the whole experience stress-free."
   }
 ];
 
 const TestimonialCard = ({ name, title, image, rating, text }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+    // bg-gradient-to-r from-[#dbeafe] to-[#bfdbfe]
+    <div className="bg-gradient-to-r from-[#dbeafe] to-[#bfdbfe] rounded-xl shadow-md p-6 border border-gray-100 hover:shadow-lg transition-shadow duration-300">
       <div className="flex items-center mb-4">
         <img
           src={image}
@@ -513,53 +605,80 @@ const TestimonialCard = ({ name, title, image, rating, text }) => {
 };
 
 const Testimonials = () => {
+  const scrollingTestimonials = [...testimonials, ...testimonials]; // Duplicate for seamless loop
+
   return (
-    <section id="testimonials" className="py-16 px-6" style={{
-      background: "linear-gradient(to bottom, white, #1399c610, white)"
-    }}>
-      <div className="container mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-            What Our <span className="text-rent-blue">Users Say</span>
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Don't just take our word for it. Hear from our community of renters and how RentEasy has helped them.
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, index) => (
-            <TestimonialCard key={index} {...testimonial} />
+    <section
+      id="testimonials"
+      className="py-23 px-6 overflow-hidden"
+      style={{
+        background: "linear-gradient(to bottom, white, #1399c610, white)",
+      }}
+    >
+      <div className="text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+          What Our <span style={{ color: "#1399c6" }}>Users Say</span>
+        </h2>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Don't just take our word for it. Hear from our community of renters and how RentEasy has helped them.
+        </p>
+      </div>
+
+      {/* Scrolling container */}
+      <div className="relative overflow-hidden h-[250px]">
+        <div
+          className="flex space-x-6 animate-scroll"
+          style={{
+            animation: 'scrollLeft 30s linear infinite',
+            width: 'max-content',
+          }}
+        >
+          {scrollingTestimonials.map((testimonial, index) => (
+            <div key={index} className="flex-none w-72 md:w-80 lg:w-96">
+              <TestimonialCard {...testimonial} />
+            </div>
           ))}
         </div>
       </div>
+
+      {/* Add keyframes for animation */}
+      <style jsx>{`
+        @keyframes scrollLeft {
+          0% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+      `}</style>
     </section>
   );
 };
 
+
 // HamchaarLogo Component
-const HamchaarLogo = () => {
-  return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-6 text-center">
-        <div className="max-w-xl mx-auto">
-          <div className="bg-white shadow-md rounded-xl p-8 inline-block">
-            <div className="flex flex-col items-center justify-center">
-              <div className="bg-rent-gradient p-1 rounded-lg inline-block mb-4">
-                <div className="bg-white p-2 rounded">
-                  <h3 className="font-bold text-2xl bg-rent-gradient bg-clip-text text-transparent">Hamchaar</h3>
-                </div>
-              </div>
-              <p className="text-gray-600">
-                In collaboration with Hamchaar
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
+// const HamchaarLogo = () => {
+//   return (
+//     <section className="py-16 bg-white">
+// <div className="container mx-auto px-6 text-center">
+//   <div className="max-w-xl mx-auto">
+//     <div>
+//       <div className="flex flex-col items-center justify-center">
+        
+//         <div className="bg-gradient-to-r from-[#AEE9F7] via-[#2AB3E6] to-[#016D6D] p-1 rounded-lg inline-block mb-4">
+//           <div className="bg-white p-2 rounded">
+//             <h3 className="text-[#1399c6] text-lg font-semibold">Hamchaar</h3>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// </div>
+
+//     </section>
+//   );
+// };
 
 // Footer Component
 const Footer = () => {
@@ -570,7 +689,7 @@ const Footer = () => {
           {/* Column 1: Logo and About */}
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">
-              Rent<span className="text-rent-light-blue">Easy</span>
+              Rent<span style={{ color: '#1399c6' }}>Easy</span>
             </h2>
             <p className="text-gray-400">
               Simplifying rentals with technology and trust. Your one-stop platform for all rental needs.
@@ -623,22 +742,22 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-400 hover:text-rent-light-blue transition-colors duration-200">
+                <a href="/legal#terms" className="text-gray-400 hover:text-rent-light-blue transition-colors duration-200">
                   Terms of Service
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-rent-light-blue transition-colors duration-200">
+                <a href="/legal#privacy" className="text-gray-400 hover:text-rent-light-blue transition-colors duration-200">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-rent-light-blue transition-colors duration-200">
+                <a href="/legal#cookie" className="text-gray-400 hover:text-rent-light-blue transition-colors duration-200">
                   Cookie Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-rent-light-blue transition-colors duration-200">
+                <a href="/legal#rental" className="text-gray-400 hover:text-rent-light-blue transition-colors duration-200">
                   Rental Agreement
                 </a>
               </li>
@@ -675,6 +794,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
+
   );
 };
 
@@ -689,7 +809,7 @@ const Home = () => {
       <BrandHighlight />
       <AboutUs />
       <Testimonials />
-      <HamchaarLogo />
+      {/* <HamchaarLogo /> */}
       <Footer />
     </div>
   );
