@@ -1,49 +1,154 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const googleBtnRef = useRef(null);
+  const [googleScriptLoaded, setGoogleScriptLoaded] = useState(false);
+
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/user/signin", formData,
-        {
-          withCredentials:true,
-          headers:{
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      alert(response.data.message);
+      // Add withCredentials to ensure cookies are sent/received
+      const res = await axios.post("http://localhost:5000/user/signin", formData, { 
+        withCredentials: true 
+      });
       
-      // Store user info in localStorage
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      console.log("Regular login response:", res.data);
+      alert(res.data.message);
       
-      // Dispatch a custom event to notify other components (like Navbar) about login
-      window.dispatchEvent(new Event('loginStateChanged'));
+      // Store user info
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       
-      // Redirect to home page on successful login
+      // Make sure to store the token
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+        console.log("Token stored successfully:", res.data.token);
+      } else {
+        console.warn("No token received from login API");
+      }
+      
+      window.dispatchEvent(new Event("loginStateChanged"));
       navigate("/");
-    } catch (error) {
-      alert(error.response?.data?.message || "Login failed");
+    } catch (err) {
+      console.error("Login error:", err);
+      alert(err.response?.data?.message || "Login failed");
     }
   };
 
+  const handleGoogleCallback = async (response) => {
+    try {
+      console.log("Google response received:", response);
+      
+      const result = await axios.post("http://localhost:5000/user/google-auth", {
+        token: response.credential,
+      }, { withCredentials: true });
+  
+      console.log("Server response:", result.data);
+      alert(result.data.message);
+      
+      // Store user and token securely in localStorage
+      localStorage.setItem("user", JSON.stringify(result.data.user));
+      localStorage.setItem("token", result.data.token);
+  
+      // Fire login state change event
+      window.dispatchEvent(new Event("loginStateChanged"));
+  
+      // Navigate to home page
+      navigate("/");
+    } catch (error) {
+      console.error("Google Auth Error", error);
+      alert(error.response?.data?.message || "Google authentication failed");
+    }
+  };
+
+  const initializeGoogleLogin = () => {
+    if (!window.google || !googleBtnRef.current) {
+      console.error("Google Identity Services not loaded or button ref not available");
+      return;
+    }
+
+    try {
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: handleGoogleCallback,
+      });
+
+      window.google.accounts.id.renderButton(googleBtnRef.current, {
+        theme: "outline",
+        size: "large",
+        text: "signin_with",
+        shape: "pill",
+        logo_alignment: "center",
+        width: 280
+      });
+      
+      // Also display the One Tap prompt
+      window.google.accounts.id.prompt();
+      
+      console.log("Google button initialized");
+    } catch (error) {
+      console.error("Failed to initialize Google button:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Check if client ID is available
+    if (!clientId) {
+      console.error("Google Client ID is missing. Please check your environment variables.");
+      return;
+    }
+
+    // Load the Google Identity Services script
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      console.log("Google Identity Services script loaded");
+      setGoogleScriptLoaded(true);
+    };
+    script.onerror = () => {
+      console.error("Failed to load Google Identity Services script");
+    };
+    
+    document.body.appendChild(script);
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, [clientId]);
+
+  // Initialize Google Sign-In after the script is loaded
+  useEffect(() => {
+    if (googleScriptLoaded) {
+      initializeGoogleLogin();
+    }
+  }, [googleScriptLoaded]);
+
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-300 via-white to-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-96 text-center">
+    <div className="relative flex justify-center items-center min-h-screen bg-white overflow-hidden">
+      {/* Decorative Circles */}
+      <div className="absolute top-[-50px] left-[-50px] w-60 h-60 bg-[#1399c6] opacity-20 rounded-full z-0"></div>
+      <div className="absolute bottom-[-60px] right-[-40px] w-72 h-72 bg-[#2AB3E6] opacity-20 rounded-full z-0"></div>
+      <div className="absolute top-[200px] left-[-80px] w-40 h-40 bg-[#016D6D] opacity-20 rounded-full z-0"></div>
+
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-96 text-center z-10">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">Login</h2>
-        
+
         <form className="space-y-4" onSubmit={handleSubmit}>
           <input
             type="email"
@@ -51,7 +156,8 @@ const Login = () => {
             placeholder="Email ID"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-3 border rounded-lg bg-gradient-to-r from-white to-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            required
+            className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#1399c6]"
           />
           <input
             type="password"
@@ -59,20 +165,41 @@ const Login = () => {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full p-3 border rounded-lg bg-gradient-to-r from-white to-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            required
+            className="w-full p-3 border rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#1399c6]"
           />
-          
+
           <button
             type="submit"
-            className="w-full p-3 text-white font-semibold rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 transition-all"
+            className="w-full p-3 text-white font-semibold rounded-lg bg-gradient-to-r from-[#1399c6] to-[#2AB3E6] hover:from-[#0e7fa3] hover:to-[#1a9acc] transition-all"
           >
             Login
           </button>
         </form>
-        
+
+        <div className="my-6 flex justify-center items-center">
+          <div className="border-t border-gray-300 flex-grow"></div>
+          <div className="mx-4 text-gray-500">or</div>
+          <div className="border-t border-gray-300 flex-grow"></div>
+        </div>
+
+        <div className="flex justify-center my-4">
+          <div 
+            id="googleSignInButton" 
+            ref={googleBtnRef} 
+            className="w-full flex justify-center"
+          ></div>
+        </div>
+
+        {!googleScriptLoaded && (
+          <p className="text-sm text-gray-500">Loading Google Sign-In...</p>
+        )}
+
         <p className="mt-4 text-gray-600">
-          Don't have an account? 
-          <a href="/signup" className="text-indigo-500 font-medium hover:underline"> Sign up</a>
+          Don't have an account?{" "}
+          <a href="/signup" className="text-indigo-500 font-medium hover:underline">
+            Sign up
+          </a>
         </p>
       </div>
     </div>

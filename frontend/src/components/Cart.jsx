@@ -52,9 +52,10 @@ const Cart = () => {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden text-gray-900 font-sans">
       {/* Decorative Background Blurs */}
-      <div className="absolute top-0 left-0 w-64 h-64 bg-purple-100 rounded-full blur-3xl" />
-      <div className="absolute top-20 right-0 w-96 h-96 bg-blue-100 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-teal-100 rounded-full blur-3xl" />
+      <div className="absolute top-[-50px] left-[-50px] w-60 h-60 bg-[#1399c6] opacity-20 rounded-full z-0"></div>
+      <div className="absolute bottom-[-60px] right-[-40px] w-72 h-72 bg-[#2AB3E6] opacity-20 rounded-full z-0"></div>
+      <div className="absolute top-[200px] left-[-80px] w-40 h-40 bg-[#016D6D] opacity-20 rounded-full z-0"></div>
+
 
       {/* Main Content */}
       <div className="relative max-w-6xl mx-auto px-6 py-16 z-10">

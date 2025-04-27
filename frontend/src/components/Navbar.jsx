@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search, ChevronDown, ShoppingCart, User, X, Bell } from "lucide-react";
+import { Search, ChevronDown, ShoppingCart, User, X, Bell } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import RentEasyLogo from "../assets/RentEasy_logo.jpeg";
 
@@ -141,6 +142,7 @@ const Navbar = ({ productId }) => {
     }
   };
   
+  
 
   return (
 <nav className="fixed w-full bg-white border-b border-gray-200 py-3 z-50">
@@ -275,10 +277,28 @@ const Navbar = ({ productId }) => {
               </span>
             )}
           </button>
+          {/* Cart Icon */}
+          <button
+            className="relative text-gray-700 hover:text-blue-600 transition-all duration-200"
+            onClick={() => navigate("/cart")}
+          >
+            <ShoppingCart size={20} />
+            {cartItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {cartItems}
+              </span>
+            )}
+          </button>
 
           <button
             className="text-gray-700 border border-blue-500 hover:bg-blue-50 px-4 py-2 rounded-md transition-all"
             onClick={() => navigate(`/rent/${productId}`)}
+          >
+            Rent
+          </button>
+          <button
+            className="text-gray-700 border border-blue-500 hover:bg-blue-50 px-4 py-2 rounded-md transition-all"
+            onClick={() => navigate("/rental")}
           >
             Rent
           </button>
@@ -301,7 +321,6 @@ const Navbar = ({ productId }) => {
         </div>
       </div>
     </div>
-
 </nav>
 
   );

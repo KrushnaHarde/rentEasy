@@ -8,9 +8,11 @@ import Profile from "./components/Profile";
 import SearchResult from './components/SearchResult';
 import ProductDetail from "./components/ProductDetail";
 import Cart from "./components/Cart";
-import Rent from "./components/Rent";
+import Rental from "./components/Rental";
 import Notification from "./components/Notifications";
 import Legal from "./components/Legal";
+import CategoryProducts from "./components/CategoryProducts";
+
 
 import './index.css';  // Or './App.css' if that's where you put the Tailwind imports
 
@@ -28,11 +30,14 @@ function App() {
         <Route path="/search" element={<SearchResult />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/rent" element={<Rent />} />
+        <Route path="/rental" element={<Rental />} />
         <Route path="profile" element={<Profile />} />
         <Route path="notifications" element={<Notification />} />
         <Route path="/legal" element={<Legal/>} />
 
+
+        <Route path="/category/:categoryName" element={<CategoryProducts />} />
+        {/* <Route path="/category/:category/:subcategory" element={<CategoryProducts />} /> */}
 
       </Routes>
     </Router>

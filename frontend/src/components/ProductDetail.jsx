@@ -293,33 +293,39 @@ const ProductDetail = () => {
 
   // Render star rating
   const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <span key={i} className={`text-lg ${i <= rating ? 'text-yellow-500' : 'text-gray-300'}`}>
-          ★
-        </span>
-      );
-    }
-    return stars;
+    return Array(5).fill(0).map((_, i) => (
+      <svg 
+        key={i} 
+        className={`w-4 h-4 ${i < rating ? 'text-yellow-400' : 'text-gray-300'} hover:cursor-[pointer]`}
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 24 24" 
+        fill="currentColor"
+      >
+        <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+      </svg>
+    ));
   };
 
   // Render selectable stars for review form
   const renderSelectableStars = () => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <button
-          key={i}
-          type="button"
-          onClick={() => setReviewForm({...reviewForm, rating: i})}
-          className={`text-2xl focus:outline-none ${i <= reviewForm.rating ? 'text-yellow-500' : 'text-gray-300'}`}
+    return Array(5).fill(0).map((_, i) => (
+      <button
+        key={i}
+        type="button"
+        onClick={() => setReviewForm({...reviewForm, rating: i + 1})}
+        className="focus:outline-none mr-1"
+        aria-label={`Rate ${i + 1} stars`}
+      >
+        <svg 
+          className={`w-8 h-8 transition-colors duration-200 ${i < reviewForm.rating ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-200'}`}
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 24 24" 
+          fill="currentColor"
         >
-          ★
-        </button>
-      );
-    }
-    return stars;
+          <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+        </svg>
+      </button>
+    ));
   };
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
@@ -378,7 +384,7 @@ const ProductDetail = () => {
           {/* Eye-catching price */}
           <div className="mb-6 mt-6 bg-gray-50 p-4 rounded-lg">
             <div className="flex items-baseline">
-              <span className="text-3xl font-bold text-blue-600">₹{product.price}</span>
+              <span className="text-3xl font-bold text-[#1399c6]">₹{product.price}</span>
               <span className="ml-2 text-gray-600 font-medium">per day</span>
             </div>
             <p className="text-sm text-gray-500 mt-1">max Duration: {product.duration?.days} days</p>
@@ -471,7 +477,7 @@ const ProductDetail = () => {
                   <button
                     type="submit"
                     disabled={rentalStatus.loading}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg disabled:opacity-70"
+                    className="bg-[#1399c6] hover:bg-[#0f85ad] text-white font-medium py-2 px-4 rounded-lg disabled:opacity-70"
                   >
                     {rentalStatus.loading ? 'Processing...' : 'Confirm Rental'}
                   </button>
@@ -490,7 +496,7 @@ const ProductDetail = () => {
               {cartStatus.loading ? 'ADDING...' : 'ADD TO CART'}
             </button>
             <button 
-              className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-bold py-3 px-6 rounded-lg transition duration-300"
+              className="bg-[#1399c6] hover:bg-[#0f85ad] cursor-pointer text-white font-bold py-3 px-6 rounded-lg transition duration-300"
               onClick={() => setShowRentalForm(true)}
               disabled={showRentalForm}
             >
@@ -501,33 +507,51 @@ const ProductDetail = () => {
       </div>
       
       {/* Reviews Section - Enhanced with actual reviews */}
-      <div className="bg-gray-50 p-6">
+      <div 
+        className="relative p-6" 
+        style={{
+          background: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)'
+        }}
+      >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold">Ratings & Reviews</h2>
+          <h2 className="text-xl font-bold text-gray-800">Ratings & Reviews</h2>
           <button 
             onClick={() => setShowReviewForm(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+            className="bg-[#1399c6] hover:bg-[#0f85ad] text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors duration-200 shadow-md"
           >
             Write a Review
           </button>
         </div>
         
         {reviewsLoading ? (
-          <div className="text-center p-6">
-            <p>Loading reviews...</p>
+          <div className="text-center p-6 bg-white rounded-lg shadow-md border border-[#1399c6]/20">
+            <div className="flex justify-center">
+              <svg className="animate-spin h-8 w-8 text-[#1399c6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+            <p className="mt-3 text-gray-600">Loading reviews...</p>
           </div>
         ) : reviews.length > 0 ? (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {reviews.map((review) => (
-                // im here
-              <div key={review.id} className="bg-white p-4 rounded-lg shadow-sm"> 
+              <div 
+                key={review.id} 
+                className="bg-white p-5 rounded-lg shadow-md border border-[#1399c6]/30"
+                style={{
+                  boxShadow: '0 4px 12px rgba(19, 153, 198, 0.1)'
+                }}
+              > 
                 <div className="flex justify-between items-start">
                   <div>
                     <div className="flex items-center">
                       <div className="flex mr-2">
                         {renderStars(review.rating)}
                       </div>
-                      <span className="font-medium">{review.user.fullName || "User"}</span>
+                      <span className="font-medium text-gray-800">{review.user.fullName || "User"}</span>
                       {review.isVerifiedRent && (
                         <span className="ml-2 bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
                           Verified Rent
@@ -544,7 +568,7 @@ const ProductDetail = () => {
                 {review.images && review.images.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {review.images.map((img, idx) => (
-                      <div key={idx} className="h-20 w-20 rounded overflow-hidden">
+                      <div key={idx} className="h-20 w-20 rounded-lg overflow-hidden shadow-sm">
                         <img 
                           src={baseURL + img} 
                           alt={`Review image ${idx+1}`} 
@@ -558,47 +582,78 @@ const ProductDetail = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center bg-white p-6 rounded-lg">
-            <p className="text-gray-500">No reviews yet for this product.</p>
-            <p className="text-gray-500 mt-2">Be the first one to review!</p>
+          <div 
+            className="text-center bg-white p-8 rounded-lg border border-[#1399c6]/30"
+            style={{
+              boxShadow: '0 4px 12px rgba(19, 153, 198, 0.1)'
+            }}
+          >
+            <div className="mb-4 text-[#1399c6]">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+            </div>
+            <p className="text-gray-700 font-medium">No reviews yet for this product.</p>
+            <p className="text-gray-500 mt-2">Be the first one to share your experience!</p>
           </div>
         )}
       </div>
 
       {/* Review Form Modal */}
       {showReviewForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-#fff bg-opacity-50 flex items-center justify-center p-4 z-50" style={{ backdropFilter: 'blur(5px)' }}>
+          <div 
+            className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
+            style={{
+              boxShadow: '0 10px 25px rgba(19, 153, 198, 0.2)',
+              border: '1px solid rgba(19, 153, 198, 0.3)'
+            }}
+          >
             <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold">Write a Review</h3>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-gray-800">Write a Review</h3>
                 <button 
                   onClick={() => setShowReviewForm(false)} 
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-500 hover:text-gray-700 h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
                 >
-                  &times;
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
                 </button>
               </div>
 
               {reviewStatus.success ? (
-                <div className="bg-green-100 text-green-800 p-4 rounded-lg text-center">
-                  <p className="font-medium">Review submitted successfully!</p>
+                <div className="bg-green-50 text-green-800 p-6 rounded-lg text-center border border-green-200">
+                  <div className="flex justify-center mb-3 text-green-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="font-medium text-lg">Review submitted successfully!</p>
                   <p className="mt-2">Thank you for your feedback.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmitReview}>
+                <form onSubmit={handleSubmitReview} className="space-y-6">
                   {/* Rating */}
-                  <div className="mb-4">
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Rating
                     </label>
                     <div className="flex">
                       {renderSelectableStars()}
                     </div>
+                    {reviewForm.rating > 0 && (
+                      <p className="text-sm text-gray-500 mt-1">
+                        {reviewForm.rating === 5 ? "Excellent" : 
+                         reviewForm.rating === 4 ? "Very Good" :
+                         reviewForm.rating === 3 ? "Good" :
+                         reviewForm.rating === 2 ? "Fair" : "Poor"}
+                      </p>
+                    )}
                   </div>
 
                   {/* Comment */}
-                  <div className="mb-4">
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Your Review
                     </label>
@@ -607,34 +662,36 @@ const ProductDetail = () => {
                       value={reviewForm.comment}
                       onChange={handleReviewInputChange}
                       rows="4"
-                      className="w-full p-2 border rounded-lg"
+                      className="w-full p-3 border border-gray-300 focus:border-[#1399c6] focus:ring focus:ring-[#1399c6]/20 rounded-lg transition"
                       placeholder="Share your thoughts about this product..."
                       required
                     ></textarea>
                   </div>
 
                   {/* Image Upload */}
-                  <div className="mb-4">
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Add Photos (Optional, max 3)
                     </label>
                     
                     {/* Image preview */}
                     {previewImages.length > 0 && (
-                      <div className="flex gap-2 mb-3">
+                      <div className="flex gap-3 mb-4">
                         {previewImages.map((url, index) => (
-                          <div key={index} className="relative h-20 w-20">
+                          <div key={index} className="relative h-24 w-24 rounded-lg overflow-hidden shadow-sm border border-gray-200">
                             <img 
                               src={url} 
                               alt={`Preview ${index+1}`} 
-                              className="h-full w-full object-cover rounded"
+                              className="h-full w-full object-cover"
                             />
                             <button
                               type="button"
                               onClick={() => removeImage(index)}
-                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md hover:bg-red-600 transition-colors"
                             >
-                              &times;
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
                             </button>
                           </div>
                         ))}
@@ -643,15 +700,27 @@ const ProductDetail = () => {
                     
                     {previewImages.length < 3 && (
                       <div className="mt-2">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                          className="text-sm"
-                          multiple={true}
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          Max 3 images, 5MB per image
+                        <div className="relative">
+                          <input
+                            id="file-upload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="sr-only"
+                            multiple={previewImages.length < 2}
+                          />
+                          <label
+                            htmlFor="file-upload"
+                            className="cursor-pointer flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            {previewImages.length === 0 ? "Choose Photos" : "Add More Photos"}
+                          </label>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">
+                          Max 3 images, 5MB per image. Supported formats: JPG, PNG
                         </p>
                       </div>
                     )}
@@ -659,19 +728,39 @@ const ProductDetail = () => {
                   
                   {/* Error message */}
                   {reviewStatus.error && (
-                    <div className="bg-red-100 text-red-800 p-3 rounded-lg mb-4">
-                      Error: {reviewStatus.error}
+                    <div className="bg-red-50 text-red-800 p-3 rounded-lg border border-red-200">
+                      <div className="flex">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        <span>Error: {reviewStatus.error}</span>
+                      </div>
                     </div>
                   )}
 
                   {/* Submit Button */}
                   <div className="flex justify-end">
                     <button
-                      type="submit"
-                      disabled={reviewStatus.loading}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium disabled:opacity-70"
+                      type="button"
+                      onClick={() => setShowReviewForm(false)}
+                      className="mr-3 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 font-medium text-sm"
                     >
-                      {reviewStatus.loading ? 'Submitting...' : 'Submit Review'}
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={reviewStatus.loading || reviewForm.rating === 0}
+                      className="bg-[#1399c6] hover:bg-[#0f85ad] text-white px-5 py-2 rounded-lg font-medium text-sm shadow-md transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      {reviewStatus.loading ? (
+                        <span className="flex items-center">
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Submitting...
+                        </span>
+                      ) : 'Submit Review'}
                     </button>
                   </div>
                 </form>

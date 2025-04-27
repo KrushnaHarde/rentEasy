@@ -54,6 +54,10 @@ const Notifications = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4">
+      <div className="absolute top-[-50px] left-[-50px] w-60 h-60 bg-[#1399c6] opacity-20 rounded-full z-0"></div>
+      <div className="absolute bottom-[-60px] right-[-40px] w-72 h-72 bg-[#2AB3E6] opacity-20 rounded-full z-0"></div>
+      <div className="absolute top-[200px] left-[-80px] w-40 h-40 bg-[#016D6D] opacity-20 rounded-full z-0"></div>
+
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-semibold flex items-center gap-2">
           <Bell className="text-yellow-500" /> Notifications

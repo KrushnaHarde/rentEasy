@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // import LottieAnimation from './LottieAnimation';
 import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/Button";
 import { Check, Shield, Clock, PiggyBank } from 'lucide-react';
 import { Star } from 'lucide-react';
@@ -20,7 +21,11 @@ import {
   Linkedin, 
   Mail, 
   Phone, 
-  MapPin
+  MapPin,
+  Gem,
+  Dumbbell,Trophy,
+  Fan,
+  Boxes 
 } from "lucide-react";
 
 // Carousel Component
@@ -135,7 +140,7 @@ const Carousel = () => {
 
 const categories = [
   {
-    title: "Electronics",
+    title: "Electronics & Appliance",
     icon: <Laptop size={40} />,
     color: "#1399c6",       // Light Blue
     hoverColor: "#1171ba",  // Blue
@@ -149,7 +154,7 @@ const categories = [
     subcategories: ["Mountain Bikes", "Road Bikes", "Electric Bikes", "BMX", "Hybrid Bikes", "Cruisers", "Kids Bikes"]
   },
   {
-    title: "Fashion",
+    title: "Clothing Fashion",
     icon: <Shirt size={40} />,
     color: "#1171ba",
     hoverColor: "#0e8c7f",
@@ -191,7 +196,7 @@ const categories = [
     subcategories: ["Fiction", "Non-Fiction", "Academic", "Children's Books", "Comics", "Magazines", "Reference"]
   },
   {
-    title: "Real Estate",
+    title: "Home Appliances",
     icon: <HomeIcon size={40} />,
     color: "#0e8c7f",
     hoverColor: "#1399c6",
@@ -280,7 +285,12 @@ const CategoryCard = ({ title, icon, color, hoverColor, subcategories }) => {
   );
 };
 
+
+
 const Categories = () => {
+
+const navigate = useNavigate();
+// />
   return (
     <section id="categories" className="py-27 px-6 bg-gray-50">
       <div className="container mx-auto">
@@ -294,9 +304,14 @@ const Categories = () => {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-          {categories.map((category, index) => (
-            <CategoryCard key={index} {...category} />
-          ))}
+        {categories.map((category, index) => (
+  <CategoryCard 
+    key={index}
+    {...category}
+    navigate={navigate}
+  />
+))}
+
         </div>
       </div>      
     </section>
@@ -310,6 +325,7 @@ const Categories = () => {
 // import React, { useState, useEffect } from 'react';
 
 const Recommendations = () => {
+  const navigate = useNavigate(); // Add this import at the top
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -376,7 +392,7 @@ const Recommendations = () => {
                     alt={product.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      console.error("Image failed to load:", product.productImage);
+                      // console.error("Image failed to load:");
                       e.target.onerror = null; // Prevent infinite loop
                       e.target.src = 'https://via.placeholder.com/400?text=No+Image';
                     }}
@@ -652,9 +668,22 @@ const Testimonials = () => {
           }
         }
       `}</style>
+
+      {/* Add keyframes for animation */}
+      <style jsx>{`
+        @keyframes scrollLeft {
+          0% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+      `}</style>
     </section>
   );
 };
+
 
 
 // HamchaarLogo Component
