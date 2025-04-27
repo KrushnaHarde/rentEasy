@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./ui/Button";
 import { Check, Shield, Clock, PiggyBank } from 'lucide-react';
 import { Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Laptop, 
   Bike, 
@@ -11,7 +12,7 @@ import {
   Home as HomeIcon, 
   Camera, 
   Car, 
-  PenTool, 
+  PenTool,
   Sofa,
   Facebook, 
   Twitter, 
