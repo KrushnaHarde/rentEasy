@@ -3,16 +3,23 @@ const Review = require('../models/review');
 const Product = require('../models/product');
 const multer = require('multer');
 const path = require('path');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// Configure multer storage for review images
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/reviews');
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Configure Cloudinary storage for multer
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'reviews',
+        allowed_formats: ['jpg', 'jpeg', 'png'],
+        transformation: [{ width: 1000, height: 1000, crop: 'limit' }]
     }
 });
 
@@ -25,7 +32,7 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// Initialize multer upload
+// Initialize multer upload with Cloudinary storage
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
@@ -61,9 +68,9 @@ const createReview = async (req, res) => {
             comment
         };
 
-        // Handle uploaded images
+        // Handle uploaded images - now from Cloudinary
         if (req.files && req.files.length > 0) {
-            reviewData.images = req.files.map(file => `/uploads/reviews/${file.filename}`);
+            reviewData.images = req.files.map(file => file.path);
         }
 
         // Create the review
@@ -98,6 +105,23 @@ const getProductReviews = async (req, res) => {
     }
 };
 
+// Helper function to delete images from Cloudinary
+const deleteImagesFromCloudinary = async (imageUrls) => {
+    try {
+        if (!imageUrls || imageUrls.length === 0) return;
+        
+        const deletePromises = imageUrls.map(imageUrl => {
+            // Extract public_id from Cloudinary URL
+            const publicId = imageUrl.split('/').slice(-1)[0].split('.')[0];
+            return cloudinary.uploader.destroy(`reviews/${publicId}`);
+        });
+        
+        await Promise.all(deletePromises);
+    } catch (error) {
+        console.error("Error deleting images from Cloudinary:", error);
+    }
+};
+
 // Update a review
 const updateReview = async (req, res) => {
     try {
@@ -124,7 +148,11 @@ const updateReview = async (req, res) => {
 
         // Handle uploaded images
         if (req.files && req.files.length > 0) {
-            updateData.images = req.files.map(file => `/uploads/reviews/${file.filename}`);
+            // Delete old images from Cloudinary
+            await deleteImagesFromCloudinary(review.images);
+            
+            // Add new image URLs from Cloudinary
+            updateData.images = req.files.map(file => file.path);
         }
 
         // Update the review
@@ -163,6 +191,9 @@ const deleteReview = async (req, res) => {
         if (review.user.toString() !== userId) {
             return res.status(403).json({ error: "Not authorized to delete this review" });
         }
+
+        // Delete images from Cloudinary
+        await deleteImagesFromCloudinary(review.images);
 
         // Store product ID for later use
         const productId = review.product;
