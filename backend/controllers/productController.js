@@ -393,27 +393,69 @@ const getProductsByLocation = async (req, res) => {
   }
 };
 
+// Fixed middleware to handle all authentication types
 const recordProductView = async (req, res, next) => {
   try {
-    // Check if user is authenticated
-    if (!req.user || !req.user.id) {
-      console.log("No authenticated user found, skipping view recording");
+    // Extract token from different possible sources
+    let token = req.cookies["token"] || req.headers["authorization"];
+    
+    // If no token is found through the usual channels, check query params or other sources
+    if (!token && req.query.token) {
+      token = req.query.token;
+    }
+    
+    // Handle "Bearer <token>" format
+    if (token && token.startsWith("Bearer ")) {
+      token = token.split(" ")[1];
+    }
+    
+    if (!token) {
+      console.log("No authentication token found, skipping view recording");
       return next();
     }
     
-    const productId = req.params.id;
+    // Import the validateToken function
+    const { validateToken } = require("../services/authentication");
     
-    // Create interaction object with minimum required fields
-    const interactionData = {
-      userId: req.user.id,
-      productId,
-      interactionType: 'VIEW'
-    };
+    try {
+      // Validate the token and extract user information
+      const userPayload = validateToken(token);
+      
+      // Ensure we have a user with an ID
+      if (!userPayload || !userPayload.id) {
+        console.log("Invalid user payload, skipping view recording");
+        return next();
+      }
+      
+      const productId = req.params.id;
+      
+      // Create interaction object with validated user ID
+      const interactionData = {
+        userId: userPayload.id,
+        productId,
+        interactionType: 'VIEW'
+      };
+      
+      // Add additional information if available
+      if (userPayload.email) {
+        interactionData.userEmail = userPayload.email;
+      }
+      
+      console.log(`Recording product view by user ${userPayload.id} for product ${productId}`);
+      
+      // Import your UserInteraction model (make sure this is correctly imported at the top of your file)
+      const UserInteraction = require("../models/userInteraction"); 
+      
+      // Record this view as an interaction
+      const interaction = await UserInteraction.create(interactionData);
+      console.log(`View recorded successfully: ${interaction._id}`);
+      
+    } catch (error) {
+      // Token validation failed, but we don't want to interrupt the flow
+      console.error("Authentication error in view recording:", error.message);
+    }
     
-    // Record this view as an interaction
-    const interaction = await UserInteraction.create(interactionData);
-    
-    // Continue to the actual product detail controller
+    // Continue to the actual product detail controller regardless of authentication status
     next();
   } catch (error) {
     // Log the error in detail but don't interrupt the flow

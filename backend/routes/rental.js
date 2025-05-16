@@ -20,10 +20,19 @@ router.get('/owner', rentalController.getOwnerRentals);
 // Approve a rental request
 router.patch('/:id/approve', rentalController.approveRental);
 
-// Cancel a rental request
+// Cancel / Reject a rental request
 router.patch('/:id/cancel', rentalController.cancelRental);
 
 // Complete a rental (return the item)
 router.patch('/:id/complete', rentalController.completeRental);
+
+// Get completed rentals where user is the renter
+router.get('/user/completed', rentalController.getUserCompletedRentals);
+
+// Get completed rentals for products owned by the user
+router.get('/owner/completed', rentalController.getOwnerCompletedRentals);
+
+// Get all rentals of user(products uploaded by ) and status of all rentals 
+router.get('/rentals/my-product-rentals',rentalController.getAllProductRentals);
 
 module.exports = router;

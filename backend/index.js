@@ -15,6 +15,9 @@ const reviewRoute = require("./routes/review");
 const recommendationRoutes = require('./routes/recommendation');
 const notificationRoutes = require("./routes/notification");
 const { initNotificationScheduler } = require('./services/notificationScheduler');
+const { initializeSchedulers } = require('./schedulers/rentalScheduler');
+
+// Start the schedulers when your app initializes
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -46,7 +49,7 @@ app.use("/search", searchRoute);   // Search routes
 app.use('/recommendations', recommendationRoutes); // Recommendation routes
 
 initNotificationScheduler();
-
+initializeSchedulers();
 
 // Error handling middleware
 app.use((err, req, res, next) => {

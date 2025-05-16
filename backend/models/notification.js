@@ -28,7 +28,7 @@ const notificationSchema = new Schema(
     type: { 
         type: String, 
         enum: ['rental_request', 'rental_approved', 'rental_rejected', 'rental_cancelled', 
-               'rental_starting_soon', 'rental_ending_soon', 'rental_completed'],
+               'rental_starting_soon', 'rental_ending_soon', 'rental_completed','rental_reminder'],
         required: true
     },
     isRead: { 
