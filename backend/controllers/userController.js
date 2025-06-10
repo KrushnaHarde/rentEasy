@@ -3,6 +3,7 @@ const { createTokenForUser } = require("../services/authentication");
 const { sendOTPEmail } = require("../services/emailService");
 const { OAuth2Client } = require('google-auth-library');
 const {createHmac} = require('crypto');
+const cloudinary = require('../config/cloudinary');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -308,7 +309,7 @@ const logout = (req, res) => {
 // Protected Profile
 const profile = async (req, res) => {
   try {
-    console.log("Extracted User ID from Token:", req.user?.id);
+    // console.log("Extracted User ID from Token:", req.user?.id);
 
     if (!req.user?.id) {
       return res.status(400).json({ error: "Invalid token data. No user ID found." });
@@ -335,7 +336,7 @@ const updateUser = async (req, res) => {
     }
 
     const userId = req.user.id;
-    const { fullName, email, mobileNumber, password, currentPassword } = req.body;
+    const { fullName, email, mobileNumber, profileImage, password, currentPassword } = req.body;
     
     const user = await User.findById(userId);
     if (!user) {
@@ -362,6 +363,42 @@ const updateUser = async (req, res) => {
       user.mobileNumber = mobileNumber;
     }
     
+    // Handle profile image upload to Cloudinary
+    if (profileImage) {
+      try {
+        // Delete old profile image from Cloudinary if it exists
+        if (user.profileImage && user.profileImage.includes('cloudinary.com')) {
+          // Extract public_id from the URL
+          const urlParts = user.profileImage.split('/');
+          const publicIdWithExtension = urlParts[urlParts.length - 1];
+          const publicId = publicIdWithExtension.split('.')[0];
+          
+          try {
+            await cloudinary.uploader.destroy(`profile_images/${publicId}`);
+          } catch (deleteError) {
+            console.warn("Could not delete old profile image:", deleteError);
+          }
+        }
+
+        // Upload new profile image to Cloudinary
+        const uploadResult = await cloudinary.uploader.upload(profileImage, {
+          folder: 'profile_images',
+          public_id: `user_${userId}_${Date.now()}`,
+          transformation: [
+            { width: 400, height: 400, crop: 'fill', gravity: 'face' },
+            { quality: 'auto:good' },
+            { format: 'auto' }
+          ]
+        });
+
+        user.profileImage = uploadResult.secure_url;
+        
+      } catch (cloudinaryError) {
+        console.error("Cloudinary upload error:", cloudinaryError);
+        return res.status(500).json({ error: "Failed to upload profile image" });
+      }
+    }
+    
     // Handle password update
     if (password) {
       if (!currentPassword) {
@@ -378,7 +415,7 @@ const updateUser = async (req, res) => {
       user.password = password;
     }
     
-    if (!email && !fullName && !mobileNumber && !password) {
+    if (!email && !fullName && !mobileNumber && !profileImage && !password) {
       return res.status(400).json({ error: "No valid fields to update" });
     }
     
