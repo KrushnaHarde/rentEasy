@@ -4,6 +4,8 @@ const { sendOTPEmail } = require("../services/emailService");
 const { OAuth2Client } = require('google-auth-library');
 const {createHmac} = require('crypto');
 const cloudinary = require('../config/cloudinary');
+const streamifier = require("streamifier");
+
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -336,7 +338,7 @@ const updateUser = async (req, res) => {
     }
 
     const userId = req.user.id;
-    const { fullName, email, mobileNumber, profileImage, password, currentPassword } = req.body;
+    const { fullName, email, mobileNumber, password, currentPassword } = req.body;
     
     const user = await User.findById(userId);
     if (!user) {
@@ -364,40 +366,52 @@ const updateUser = async (req, res) => {
     }
     
     // Handle profile image upload to Cloudinary
-    if (profileImage) {
+    if (req.file) {
+  try {
+    // Delete old profile image from Cloudinary if it exists
+    if (user.profileImage && user.profileImage.includes("cloudinary.com")) {
+      const urlParts = user.profileImage.split("/");
+      const publicIdWithExtension = urlParts[urlParts.length - 1];
+      const publicId = publicIdWithExtension.split(".")[0];
+
       try {
-        // Delete old profile image from Cloudinary if it exists
-        if (user.profileImage && user.profileImage.includes('cloudinary.com')) {
-          // Extract public_id from the URL
-          const urlParts = user.profileImage.split('/');
-          const publicIdWithExtension = urlParts[urlParts.length - 1];
-          const publicId = publicIdWithExtension.split('.')[0];
-          
-          try {
-            await cloudinary.uploader.destroy(`profile_images/${publicId}`);
-          } catch (deleteError) {
-            console.warn("Could not delete old profile image:", deleteError);
-          }
-        }
-
-        // Upload new profile image to Cloudinary
-        const uploadResult = await cloudinary.uploader.upload(profileImage, {
-          folder: 'profile_images',
-          public_id: `user_${userId}_${Date.now()}`,
-          transformation: [
-            { width: 400, height: 400, crop: 'fill', gravity: 'face' },
-            { quality: 'auto:good' },
-            { format: 'auto' }
-          ]
-        });
-
-        user.profileImage = uploadResult.secure_url;
-        
-      } catch (cloudinaryError) {
-        console.error("Cloudinary upload error:", cloudinaryError);
-        return res.status(500).json({ error: "Failed to upload profile image" });
+        await cloudinary.uploader.destroy(`profile_images/${publicId}`);
+      } catch (deleteError) {
+        console.warn("Could not delete old profile image:", deleteError);
       }
     }
+
+    // Upload new profile image from buffer
+    const streamifier = require("streamifier");
+
+    const streamUpload = () =>
+      new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: "profile_images",
+            public_id: `user_${userId}_${Date.now()}`,
+            transformation: [
+              { width: 400, height: 400, crop: "fill", gravity: "face" },
+              { quality: "auto:good" },
+              { format: "auto" },
+            ],
+          },
+          (error, result) => {
+            if (result) resolve(result);
+            else reject(error);
+          }
+        );
+        streamifier.createReadStream(req.file.buffer).pipe(stream);
+      });
+
+    const uploadResult = await streamUpload();
+    user.profileImage = uploadResult.secure_url;
+  } catch (cloudinaryError) {
+    console.error("Cloudinary upload error:", cloudinaryError);
+    return res.status(500).json({ error: "Failed to upload profile image" });
+  }
+}
+
     
     // Handle password update
     if (password) {

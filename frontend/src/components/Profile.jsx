@@ -17,12 +17,13 @@ import {
 function App() {
   const [activeSection, setActiveSection] = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
+  
 
   const [profile, setProfile] = useState({
     name: "",
     email: "",
     phone: "",
-    avatar:
+    profileImage:
       "https://img.freepik.com/premium-psd/contact-icon-illustration-isolated_23-2151903357.jpg",
   });
 
@@ -33,10 +34,12 @@ function App() {
   const [avatarPreview, setAvatarPreview] = useState(""); // preview image
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [newPhone, setNewPhone] = useState(profile.phone);
 
   useEffect(() => {
     setNewName(profile.name);
     setNewEmail(profile.email);
+     setNewPhone(profile.phone);
     setAvatarPreview(profile.avatar); // show current pic as preview
   }, [profile]);
 
@@ -68,7 +71,7 @@ function App() {
           name: response.data.fullName || response.data.name || "",
           email: response.data.email || "",
           phone: response.data.phone || "",
-          avatar: response.data.avatar || profile.avatar,
+          avatar: response.data.profileImage || "",
         });
 
         setLoading(false);
@@ -119,7 +122,7 @@ function App() {
           name: response.data.fullName || response.data.name || "",
           email: response.data.email || "",
           phone: response.data.phone || "",
-          avatar: response.data.avatar || profile.avatar,
+          profileImage: response.data.profileImage || profile.avatar,
         });
 
         setLoading(false);
@@ -722,6 +725,7 @@ function App() {
 
       formData.append("fullName", newName);
       formData.append("email", newEmail);
+      formData.append("phone", newPhone);
 
       if (oldPassword) {
         formData.append("currentPassword", oldPassword);
@@ -732,7 +736,7 @@ function App() {
       }
 
       if (newAvatarFile) {
-        formData.append("avatar", newAvatarFile);
+        formData.append("profileImage", newAvatarFile);
       }
 
       const response = await axios.post(`${baseURL}/user/update`, formData, {
@@ -750,67 +754,191 @@ function App() {
   };
 
   // This function now just returns JSX without defining any hooks
-  const renderEditProfileForm = () => {
-    return (
-      <div className="space-y-6">
-        <h2 className="text-3xl font-bold text-[#1399c6]">Edit Profile</h2>
-        <p className="text-gray-600">
-          Update your personal and security details.
-        </p>
-        <div className="space-y-4">
+  // const renderEditProfileForm = () => {
+  //   return (
+  //     <div className="space-y-6">
+  //       <h2 className="text-3xl font-bold text-[#1399c6]">Edit Profile</h2>
+  //       <p className="text-gray-600">
+  //         Update your personal and security details.
+  //       </p>
+  //       <div className="space-y-4">
           
-          {/* Name & Email */}
+  //         {/* Name & Email */}
+  //         <div>
+  //           <label className="text-sm text-gray-600">Full Name</label>
+  //           <input
+  //             type="text"
+  //             value={newName}
+  //             onChange={(e) => setNewName(e.target.value)}
+  //             className="w-full p-2 border rounded"
+  //           />
+  //         </div>
+  //         <div>
+  //           <label className="text-sm text-gray-600">Email</label>
+  //           <input
+  //             type="email"
+  //             value={newEmail}
+  //             onChange={(e) => setNewEmail(e.target.value)}
+  //             className="w-full p-2 border rounded"
+  //           />
+  //         </div>
+
+  //         {/* Change Password */}
+  //         <div>
+  //           <h4 className="text-lg font-semibold mt-6 text-[#1399c6]">
+  //             Change Password
+  //           </h4>
+  //           <label className="text-sm text-gray-600">Old Password</label>
+  //           <input
+  //             type="password"
+  //             value={oldPassword}
+  //             onChange={(e) => setOldPassword(e.target.value)}
+  //             className="w-full p-2 border rounded mb-2"
+  //           />
+  //           <label className="text-sm text-gray-600">New Password</label>
+  //           <input
+  //             type="password"
+  //             value={newPassword}
+  //             onChange={(e) => setNewPassword(e.target.value)}
+  //             className="w-full p-2 border rounded"
+  //           />
+  //         </div>
+
+  //         {/* Save Button */}
+  //         <button
+  //           onClick={handleSaveChanges}
+  //           className="mt-4 px-4 py-2 bg-[#1399c6] text-white rounded-lg hover:bg-[#074e75]"
+  //         >
+  //           Save Changes
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // };
+
+  // ////////////////////////////////////
+const renderEditProfileForm = () => {
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setNewAvatarFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => setAvatarPreview(e.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-3xl font-bold text-[#1399c6]">Edit Profile</h2>
+      <p className="text-gray-600">
+        Update your personal and security details.
+      </p>
+
+      {/* Profile Picture Upload - Centered at top */}
+      <div className="flex justify-center mb-8">
+        <div className="relative">
+          <div className="w-32 h-32 rounded-full border-4 border-[#1399c6]/20 overflow-hidden bg-gray-100">
+            <img
+              src={profile.profileImage || profile.avatar}
+              alt="Profile Preview"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <label className="absolute bottom-2 right-2 bg-[#1399c6] text-white p-2 rounded-full cursor-pointer hover:bg-[#074e75] transition-colors">
+            <Edit className="w-4 h-4" />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className="hidden"
+            />
+          </label>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Left Column */}
+        <div className="space-y-4">
           <div>
-            <label className="text-sm text-gray-600">Full Name</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
             <input
               type="text"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent"
             />
           </div>
+          
           <div>
-            <label className="text-sm text-gray-600">Email</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
             <input
               type="email"
               value={newEmail}
               onChange={(e) => setNewEmail(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent"
             />
           </div>
 
-          {/* Change Password */}
           <div>
-            <h4 className="text-lg font-semibold mt-6 text-[#1399c6]">
+            <label className="block text-sm font-medium text-gray-600 mb-1">Mobile Number</label>
+            <input
+              type="tel"
+              value={newPhone}
+              onChange={(e) => setNewPhone(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent"
+              placeholder="Enter mobile number"
+            />
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-4">
+          <div>
+            <h4 className="text-lg font-semibold text-[#1399c6] mb-4">
               Change Password
             </h4>
-            <label className="text-sm text-gray-600">Old Password</label>
-            <input
-              type="password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              className="w-full p-2 border rounded mb-2"
-            />
-            <label className="text-sm text-gray-600">New Password</label>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Current Password</label>
+                <input
+                  type="password"
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent"
+                  placeholder="Enter current password"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">New Password</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1399c6] focus:border-transparent"
+                  placeholder="Enter new password"
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Save Button */}
-          <button
-            onClick={handleSaveChanges}
-            className="mt-4 px-4 py-2 bg-[#1399c6] text-white rounded-lg hover:bg-[#074e75]"
-          >
-            Save Changes
-          </button>
+          {/* Save Button - Right aligned */}
+          <div className="flex justify-end pt-4">
+            <button
+              onClick={handleSaveChanges}
+              className="px-6 py-3 bg-[#1399c6] text-white rounded-lg hover:bg-[#074e75] transition-colors font-medium"
+            >
+              Save Changes
+            </button>
+          </div>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
+
+
+
 
   const renderContent = () => {
     switch (activeSection) {
@@ -1102,19 +1230,40 @@ function App() {
               <div className="space-y-6">
                 <div className="text-center">
                   <div className="relative inline-block">
+                     {/*console.log("📷 Left Sidebar Image:", profile.profileImage)*/} 
+
                     <img
-                      src={profile.avatar}
+                      src={profile.profileImage}
                       alt="Profile"
                       className="w-20 h-20 rounded-full mx-auto border-4 border-white/80 transition-transform hover:scale-105 shadow-lg"
                     />
                     <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#096192]/10 to-transparent"></div>
                   </div>
-                  <div className="mt-4 space-y-2">
+                  {/* <div className="mt-4 space-y-2">
                     <h3 className="text-xl font-semibold text-[#1399c6]">
                       {profile.name}
                     </h3>
                     <p className="text-sm text-[#1399c6]">{profile.email}</p>
-                  </div>
+                  </div> */}
+
+                  {/* ////// */}
+                  <div className="mt-4 space-y-2">
+  <h3 className="text-xl font-semibold text-[#1399c6]">
+    {profile.name}
+  </h3>
+  <p className="text-sm text-[#1399c6]">{profile.email}</p>
+  <button
+    onClick={() => setActiveSection("edit-profile")}
+    className={`w-full px-3 py-1.5 mt-2 rounded-lg flex items-center justify-center transition-all border border-[#1399c6]/10 backdrop-blur-sm text-[#1399c6] text-sm ${
+      activeSection === "edit-profile"
+        ? "bg-[#096192]/10"
+        : "hover:bg-[#096192]/5"
+    }`}
+  >
+    <Edit className="w-3 h-3 mr-2" />
+    Edit Profile
+  </button>
+</div>
                 </div>
 
                 {/*<button
@@ -1134,7 +1283,7 @@ function App() {
                     },
                     { icon: Package, label: "My Listings", id: "listings" },
                     { icon: Bell, label: "Alerts", id: "alerts" },
-                    { icon: Edit, label: "Edit Profile", id: "edit-profile" },
+                    // { icon: Edit, label: "Edit Profile", id: "edit-profile" },
                     { icon: LogOut, label: "Logout", id: "logout" },
                   ].map((item) => (
                     <button

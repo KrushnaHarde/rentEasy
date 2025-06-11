@@ -29,5 +29,5 @@ router.get("/logout", logout);
 
 // Protected Routes
 router.get("/profile", requireAuth("token"), profile);
-router.post("/update",requireAuth("token"), upload.none(), updateUser);
+router.post("/update",requireAuth("token"), upload.single("profileImage"), updateUser);
 module.exports = router;
