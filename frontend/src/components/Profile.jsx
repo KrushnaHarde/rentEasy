@@ -34,6 +34,7 @@ function App() {
   const [avatarPreview, setAvatarPreview] = useState(""); // preview image
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [currentAlertId, setCurrentAlertId] = useState(""); // will store a alert ID. 
   const [newPhone, setNewPhone] = useState(profile.phone);
 
   useEffect(() => {
@@ -227,7 +228,7 @@ function App() {
     try {
       await axios.patch(
         `${baseURL}/rental/${rentalId}/approve`,
-        {},
+        {status: "approved"},
         {
           withCredentials: true,
           headers: {
@@ -236,14 +237,21 @@ function App() {
         }
       );
 
+      // yk
+      // await markAlertAsRead(alertId);
+
       // Refresh alerts after approval
       fetchAlerts();
       // Clear selected rental
       setSelectedRental(null);
+      setCurrentAlertId(null);
+
       alert("Rental request approved successfully!");
+      return true;
     } catch (err) {
       console.error("Failed to approve rental:", err);
       alert("Failed to approve rental request. Please try again.");
+      return false;
     }
   };
 
@@ -251,7 +259,7 @@ function App() {
     try {
       await axios.patch(
         `${baseURL}/rental/${rentalId}/cancel`,
-        {},
+        {status: "rejected"},
         {
           withCredentials: true,
           headers: {
@@ -260,14 +268,21 @@ function App() {
         }
       );
 
+      // await markAlertAsRead(alertId);
+
       // Refresh alerts after rejection
       fetchAlerts();
       // Clear selected rental
       setSelectedRental(null);
+      setCurrentAlertId(null);
+
       alert("Rental request rejected successfully!");
+      return true;
     } catch (err) {
       console.error("Failed to reject rental:", err);
+      console.log("Error details:", err.response?.data || err.message);
       alert("Failed to reject rental request. Please try again.");
+      return false;
     }
   };
 
@@ -1093,8 +1108,14 @@ const renderEditProfileForm = () => {
 
                             <div className="mt-6 flex gap-4">
                               <button
-                                onClick={() =>
-                                  handleApproveRental(selectedRental._id)
+                                onClick={async () =>{
+                                    // console.log(selectedRental._id + " -- " + selectedRental.alertId);
+                                    // handleApproveRental(selectedRental._id);
+                                    const success = await handleApproveRental(selectedRental._id);
+                                    if (success && currentAlertId) {
+                                      await markAlertAsRead(currentAlertId);
+                                    }
+                                  }
                                 }
                                 className="px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex-1 flex items-center justify-center"
                               >
@@ -1102,8 +1123,14 @@ const renderEditProfileForm = () => {
                                 Approve
                               </button>
                               <button
-                                onClick={() =>
-                                  handleRejectRental(selectedRental._id)
+                                onClick={async () =>{
+                                    console.log(selectedRental._id + " -- " + currentAlertId);
+                                    // handleRejectRental(selectedRental._id);
+                                    const success = await handleRejectRental(selectedRental._id);
+                                    if (success && currentAlertId) {
+                                      await markAlertAsRead(currentAlertId);
+                                    }
+                                  }
                                 }
                                 className="px-5 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex-1 flex items-center justify-center"
                               >
@@ -1123,7 +1150,9 @@ const renderEditProfileForm = () => {
                           className="bg-white/60 rounded-xl p-4 shadow-sm backdrop-blur-sm border border-white/20 transition-all hover:shadow-md cursor-pointer"
                           onClick={async () => {
                             await fetchRentalDetails(alert.rentalId);
-                            await markAlertAsRead(alert._id);
+                            setCurrentAlertId(alert._id); 
+                            // await markAlertAsRead(alert._id);
+                            // console.log("wtf " + alert._id)
                           }}
                         >
                           <div className="flex items-center">
@@ -1221,7 +1250,7 @@ const renderEditProfileForm = () => {
       <div className="absolute top-20 right-0 w-96 h-96 bg-[#24aae2]/10 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#0e8c7f]/10 rounded-full blur-3xl" />
 
-      <div className="w-full h-[90vh] max-w-6xl px-4 py-8 z-10">
+      <div className="w-full h-[90vh] max-w-7xl px-6 py-10 z-10">
         <div className="bg-white/40 rounded-xl shadow-[0_4px_20px_0_rgba(0,0,0,0.1),0_-4px_20px_0_rgba(0,0,0,0.05)]
  overflow-hidden relative backdrop-blur-sm border border-white/20">
           <div className="flex flex-col md:flex-row">
