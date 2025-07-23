@@ -23,7 +23,7 @@ RentEasy is a platform that allows users to **list items for rent** and **rent i
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/your-username/RentEasy.git
+   git clone https://github.com/KrushnaHarde/rentEasy.git
    cd RentEasy
    ```
 2. **Install dependencies:**
